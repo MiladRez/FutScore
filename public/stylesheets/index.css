@@ -1,0 +1,11 @@
+table {
+    width: 50% !important;
+}
+
+td {
+    text-align: center;
+}
+
+#time {
+    width: 10% !important;
+}
