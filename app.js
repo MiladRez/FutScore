@@ -10,12 +10,15 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
+////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 var leaguesArray = ["Champions League", "Europa League", "LaLiga Santander", "Serie A", "Ligue 1", "Bundesliga", "Major League Soccer",
                     "Confederations Cup", "World Cup", "Copa del Rey", "Primeira Liga", "Serie B", "Coppa Italia", "DFB Cup", "2nd Bundesliga", 
-                    "Ligue 2 ", "FA Cup", "CONCACAF", "Superliga"];
+                    "Ligue 2 ", "FA Cup", "CONCACAF", "K-League 1"];
                     
-var teamsArray = ["Real Madrid", "Flamengo"];
+var teamsArray = ["Real Madrid", "Flamengo", "Vancouver Whitecaps", "Juventus", "Los Angeles FC", "San Jose Earthquakes", "FC Barcelona"];
+////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
 var leagueSchema = new mongoose.Schema({
     league_name: String
 });
@@ -27,6 +30,24 @@ var teamSchema = new mongoose.Schema({
 });
 
 var Team = mongoose.model("Team", teamSchema);
+////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
+app.get("/", function(req, res){
+    League.find({}, function(error, leagues){
+        Team.find({}, function(error, teams) {
+            request("http://livescore-api.com/api-client/scores/live.json?key=fyZ6Y0JVL0azKSnb&secret=qMKEBfegENcJK0U0yU7wVRsGRCfCuCOV", function(error, response, body){
+                if (!error && response.statusCode == 200) {
+                    var parsedData = JSON.parse(body);
+                    
+                    res.render("index", {body: parsedData, leagues: leagues, teams: teams});
+                } else {
+                    console.log("ERROR");
+                }
+            });
+        });
+    });
+});
 
 app.post("/add_league", function(req, res) {
     var leagueName = req.body.leaguename;
@@ -67,7 +88,7 @@ app.post("/add_team", function(req, res) {
                 console.log(team);
             }
         });
-    res.redirect("/fav_leagues");
+    res.redirect("/fav_teams");
     } else {
         console.log("Invalid/Unsupported Team!");
         res.redirect("/add_team");
@@ -78,21 +99,6 @@ app.get("/add_team", function(req, res) {
     res.render("add_team", {team: teamsArray});
 });
 
-app.get("/", function(req, res){
-    League.find({}, function(error, leagues){
-        Team.find({}, function(teams) {
-            request("http://livescore-api.com/api-client/scores/live.json?key=fyZ6Y0JVL0azKSnb&secret=qMKEBfegENcJK0U0yU7wVRsGRCfCuCOV", function(error, response, body){
-                if (!error && response.statusCode == 200) {
-                    var parsedData = JSON.parse(body);
-                    res.render("index", {body: parsedData, leagues: leagues, teams: teams});
-                } else {
-                    console.log("ERROR");
-                }
-            });
-        });
-    });
-});
-
 app.get("/fav_leagues", function(req, res) {
     League.find({}, function(error, leagues) {
         if (error) {
@@ -100,6 +106,46 @@ app.get("/fav_leagues", function(req, res) {
         } else {
             res.render("fav_leagues", {leagues: leagues});
         }   
+    });
+});
+
+app.get("/fav_teams", function(req, res) {
+    Team.find({}, function(error, teams) {
+        if (error) {
+            console.log("ERROR!");
+        } else {
+            res.render("fav_teams", {teams: teams});
+        }   
+    });
+});
+
+app.get("/remove/leagues/:league_name", function(req, res){
+    var leagueName = req.params.league_name;
+    League.deleteOne({league_name: leagueName}, function(err, removedLeague){
+        if (err){
+            console.log("ERROR!");
+        } else {
+            console.log("=======================");
+            console.log("Removed League");
+            console.log("=======================");
+            console.log(removedLeague);
+            res.redirect("/fav_leagues");
+        }
+    });
+});
+
+app.get("/remove/teams/:team_name", function(req, res){
+    var teamName = req.params.team_name;
+    Team.deleteOne({team_name: teamName}, function(err, removedTeam){
+        if (err){
+            console.log("ERROR!");
+        } else {
+            console.log("=======================");
+            console.log("Removed Team");
+            console.log("=======================");
+            console.log(removedTeam);
+            res.redirect("/fav_teams");
+        }
     });
 });
 

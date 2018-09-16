@@ -5,6 +5,16 @@
         </head>
         
         <body>
+            
+            <div class="ui green fixed inverted menu">
+                <div class="ui container">
+                    <div class="header item"><i class="futbol icon" style="font-size: 2em;"></i><h2 style="margin-top: -2px !important;">FutScore</h2></div>
+                    <a href="/" class="item">Home</a>
+                    <a href="/fav_leagues" class="item">My Leagues</a>
+                    <a href="/fav_teams" class="item">My Teams</a>
+                </div>
+            </div>
+            
             <center>
             <form autocomplete="off" action="/add_league" method="POST">
                 <div class="ui action input" class="autocomplete" style="width:300px;">
@@ -16,7 +26,9 @@
             </form>
             <script src="/autocomplete.js"></script>
             <script>
-                var leaguesArray = ["Champions League", "Europa League", "LaLiga Santander", "Serie A", "Ligue 1", "Bundesliga", "Major League Soccer"];
+                var newArray = "<%= leagues %>";
+                var leaguesArray = newArray.split(",");
+                
                 autocomplete(document.getElementById("myInput"), leaguesArray);
             </script>
             </center>

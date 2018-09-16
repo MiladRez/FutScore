@@ -1,8 +1,14 @@
-button {
-    float: right;
+#add_button {
+    float: right !important;
     margin-right: 50px !important;
+    margin-top: -90px !important;
 }
 
-h2 {
+h3 {
     margin: 50px !important;
+}
+
+h1 {
+    margin-top: 100px !important;
+    margin-bottom: 50px !important;
 }
