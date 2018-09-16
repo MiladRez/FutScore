@@ -15,7 +15,9 @@ var leaguesArray = ["Champions League", "Europa League", "LaLiga Santander", "Se
                     "Confederations Cup", "World Cup", "Copa del Rey", "Primeira Liga", "Serie B", "Coppa Italia", "DFB Cup", "2nd Bundesliga", 
                     "Ligue 2 ", "FA Cup", "CONCACAF", "K-League 1"];
                     
-var teamsArray = ["Real Madrid", "Flamengo", "Vancouver Whitecaps", "Juventus", "Los Angeles FC", "San Jose Earthquakes", "FC Barcelona"];
+var teamsArray = ["Real Madrid", "FC Barcelona", "Celta Vigo", "Athletic Bilbao", "Atletico Madrid", "Real Betis", "Levante", "Sevilla", "Espanyol",
+                  "Getafe CF", "Real Sociedad", "Villareal", "Eibar", "Alaves", "Girona", "Huesca", "Valencia", "Rayo Vallecano", "Valladolid",
+                  "Leganes", "Arsenal FC", "Manchester United", "Flamengo", "Vancouver Whitecaps", "Juventus", "Los Angeles FC", "San Jose Earthquakes"];
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
@@ -116,6 +118,27 @@ app.get("/fav_teams", function(req, res) {
         } else {
             res.render("fav_teams", {teams: teams});
         }   
+    });
+});
+
+app.get("/standings", function(req, res) {
+    var options = {
+        url: 'https://api.football-data.org/v2/competitions/2021/standings',
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Accept-Charset': 'utf-8',
+            "X-Auth-Token": "788a449190624519aac963d1092782bb"
+        }
+    }
+    request(options, function(error, response, body){
+        if (!error && response.statusCode == 200) {
+            var parsedData = JSON.parse(body);
+            res.render("standings", {body: parsedData});
+            console.log(parsedData);
+        } else {
+            console.log("ERROR");
+        }
     });
 });
 
