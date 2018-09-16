@@ -1,0 +1,23 @@
+<% include ./partials/header %>
+            <link rel="stylesheet" type="text/css" href="/stylesheets/add_league.css"/>
+            <title>Add League</title>
+            <h1><center>Add League</center></h1>
+        </head>
+        
+        <body>
+            <center>
+            <form autocomplete="off" action="/add_league" method="POST">
+                <div class="ui action input" class="autocomplete" style="width:300px;">
+                    <input id="myInput" type="text" name="leaguename" placeholder="Search...">
+                    <button class="ui icon button">
+                        <i class="search icon"></i>
+                    </button>
+                </div>
+            </form>
+            <script src="/autocomplete.js"></script>
+            <script>
+                var leaguesArray = ["Champions League", "Europa League", "LaLiga Santander", "Serie A", "Ligue 1", "Bundesliga", "Major League Soccer"];
+                autocomplete(document.getElementById("myInput"), leaguesArray);
+            </script>
+            </center>
+<% include ./partials/footer %>

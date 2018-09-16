@@ -1,0 +1,23 @@
+<% include ./partials/header %>
+            <link rel="stylesheet" type="text/css" href="/stylesheets/add_league.css"/>
+            <title>Add Team</title>
+            <h1><center>Add Team</center></h1>
+        </head>
+        
+        <body>
+            <center>
+            <form autocomplete="off" action="/add_team" method="POST">
+                <div class="ui action input" class="autocomplete" style="width:300px;">
+                    <input id="myInput" type="text" name="teamname" placeholder="Search...">
+                    <button class="ui icon button">
+                        <i class="search icon"></i>
+                    </button>
+                </div>
+            </form>
+            <script src="/autocomplete.js"></script>
+            <script>
+                var teamsArray = ["Real Madrid", "Flamengo"];
+                autocomplete(document.getElementById("myInput"), teamsArray);
+            </script>
+            </center>
+<% include ./partials/footer %>

@@ -1,0 +1,18 @@
+<% include ./partials/header %> 
+        <link rel="stylesheet" type="text/css" href="/stylesheets/fav_leagues.css"/>
+        <title>Favourite Leagues</title>
+        <h1><center>Your favourite leagues</center></h1>
+    </head>
+    <body>
+        <form action="/add_league">
+            <button class="ui basic button">
+                <i class="plus icon"></i>
+                Add League
+            </button>
+        </form>
+        <center>
+            <% leagues.forEach(function(league) {%>
+            <h2><%= league.league_name %></h2>
+            <% }); %>
+        </center>
+<% include ./partials/footer %>

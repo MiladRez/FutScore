@@ -1,31 +1,32 @@
-<html>
-    <center>
-        <head>
-            <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.css"/>
-            <link rel="stylesheet" type="text/css" href="/stylesheets/index.css"
+<% include ./partials/header %>
+            <link rel="stylesheet" type="text/css" href="/stylesheets/index.css"/>
+            <title>FutScore</title>
             <h1>INDEX PAGE</h1>
         </head>
         
         <body>
-            <% body["data"]["match"].forEach(function(fixture){%>
-                <% if (leagues.includes(fixture.league_name)) { %>
-                    <table class="ui fixed table">
-                        <thead>
-                            <tr>
-                                <th colspan="4"><center><%= fixture.league_name %></center></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td id="time"><a class="ui green circular label"><%= fixture.time %></a></td>
-                                <td><%= fixture.home_name %></td>
-                                <td><%= fixture.score %></td>
-                                <td><%= fixture.away_name %></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                <% } %>
+            <i class="bars icon"></i>
+            <center>
+            <% body["data"]["match"].forEach(function(fixture){ %>
+                <% leagues.forEach(function(league){ %>
+                    <% if (fixture.league_name == league.league_name) { %>
+                        <table class="ui fixed table">
+                            <thead>
+                                <tr>
+                                    <th colspan="4"><center><%= fixture.league_name %></center></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="time"><a class="ui green circular label"><%= fixture.time %></a></td>
+                                    <td><%= fixture.home_name %></td>
+                                    <td><%= fixture.score %></td>
+                                    <td><%= fixture.away_name %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <% } %>
+                <% }); %>
             <% }); %>
-        </body>
-    </center>
-</html>
+            
+<% include ./partials/footer %>
