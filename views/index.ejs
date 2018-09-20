@@ -38,26 +38,26 @@
                         <% }); %>
                     </tbody>
                 </table>
-            
-            <% leagues.forEach(function(league) { %>
-                <table class="ui fixed table">
-                    <thead>
-                        <tr>
-                            <th colspan="4"><center><%= league.league_name %></center></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% body["data"]["match"].forEach(function(fixture) { %>
-                            <% if (fixture.league_name == league.league_name) { %>
-                                <tr>
-                                    <td id="time"><a class="ui green circular label"><%= fixture.time %></a></td>
-                                    <td><%= fixture.home_name %></td>
-                                    <td><%= fixture.score %></td>
-                                    <td><%= fixture.away_name %></td>
-                                </tr>
-                            <% } %>
-                        <% }); %>
-                    </tbody>
-                </table>
-            <% }); %>
+                
+                <% leagues.forEach(function(league) { %>
+                    <table class="ui fixed table">
+                        <thead>
+                            <tr>
+                                <th colspan="4"><center><%= league.league_name %></center></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% body["data"]["match"].forEach(function(fixture) { %>
+                                <% if (fixture.league_name == league.league_name) { %>
+                                    <tr>
+                                        <td id="time"><a class="ui green circular label"><%= fixture.time %></a></td>
+                                        <td><%= fixture.home_name %></td>
+                                        <td><%= fixture.score %></td>
+                                        <td><%= fixture.away_name %></td>
+                                    </tr>
+                                <% } %>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% }); %>
 <% include ./partials/footer %>

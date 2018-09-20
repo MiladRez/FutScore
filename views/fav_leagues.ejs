@@ -33,7 +33,7 @@
                     <% leagues.forEach(function(league) { %>
                         <tr style="height: 50px;">
                             <td><%= league.league_name %></td>
-                            <form action="/" method="get">
+                            <form action="/standings/leagues/<%= league.league_name %>" method="get">
                                 <td><button name="table" class="ui icon button"><i class="table icon"></i></button></td>
                             </form>
                             <form action="/remove/leagues/<%= league.league_name %>" method="get">

@@ -11,13 +11,28 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
-var leaguesArray = ["Champions League", "Europa League", "LaLiga Santander", "Serie A", "Ligue 1", "Bundesliga", "Major League Soccer",
-                    "Confederations Cup", "World Cup", "Copa del Rey", "Primeira Liga", "Serie B", "Coppa Italia", "DFB Cup", "2nd Bundesliga", 
-                    "Ligue 2 ", "FA Cup", "CONCACAF", "K-League 1"];
+var leaguesArray = ["UEFA Champions League", "FIFA World Cup", "Primera Division", "Serie A", "Ligue 1", "Bundesliga", "Primeira Liga", "Eredivisie",
+                    "Série A", "Premier League", "Championship", "European Championship"];
                     
-var teamsArray = ["Real Madrid", "FC Barcelona", "Celta Vigo", "Athletic Bilbao", "Atletico Madrid", "Real Betis", "Levante", "Sevilla", "Espanyol",
+var teamsArray = ["Real Madrid", "Barcelona", "Celta Vigo", "Athletic Bilbao", "Atletico Madrid", "Real Betis", "Levante", "Sevilla", "Espanyol",
                   "Getafe CF", "Real Sociedad", "Villareal", "Eibar", "Alaves", "Girona", "Huesca", "Valencia", "Rayo Vallecano", "Valladolid",
                   "Leganes", "Arsenal FC", "Manchester United", "Flamengo", "Vancouver Whitecaps", "Juventus", "Los Angeles FC", "San Jose Earthquakes"];
+  
+// 2000 = FIFA World Cup
+// 2001 = UEFA Champions League               
+// 2002 = Bundesliga
+// 2003 = Eredivisie (Dutch League)
+// 2013 = Série A (Brazilian League)
+// 2014 = Primera Division (La Liga)
+// 2015 = Ligue 1
+// 2016 = Championship
+// 2017 = Primeira Liga (Portugese League)
+// 2018 = European Championship
+// 2019 = Serie A
+// 2021 = Premier League
+
+var league_id = {"Bundesliga": 2002, "Eredivisie": 2003, "Brazilian League": 2013, "LaLiga Santander": 2014, "Ligue 1": 2015, "Championship": 2016,
+                 "Primeira Liga": 2017, "Serie A": 2019, "Premier League": 2021};
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
@@ -36,16 +51,33 @@ var Team = mongoose.model("Team", teamSchema);
 
 ////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
 app.get("/", function(req, res){
+    var options = {
+        url: 'https://api.football-data.org/v2/competitions/2001/matches',
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Accept-Charset': 'utf-8',
+            "X-Auth-Token": "788a449190624519aac963d1092782bb"
+        }
+    }
+    var url = "http://livescore-api.com/api-client/scores/live.json?key=fyZ6Y0JVL0azKSnb&secret=qMKEBfegENcJK0U0yU7wVRsGRCfCuCOV";
+    
     League.find({}, function(error, leagues){
         Team.find({}, function(error, teams) {
-            request("http://livescore-api.com/api-client/scores/live.json?key=fyZ6Y0JVL0azKSnb&secret=qMKEBfegENcJK0U0yU7wVRsGRCfCuCOV", function(error, response, body){
-                if (!error && response.statusCode == 200) {
-                    var parsedData = JSON.parse(body);
-                    
-                    res.render("index", {body: parsedData, leagues: leagues, teams: teams});
-                } else {
-                    console.log("ERROR");
-                }
+            request(url, function(error, response, body){
+                request(options, function(error2, response2, body2){
+                    if (!error2 && response2.statusCode == 200) {
+                        var parsedData2 = JSON.parse(body2);
+                    } else {
+                        console.log("ERROR");
+                    }
+                    if (!error && response.statusCode == 200) {
+                        var parsedData = JSON.parse(body);
+                    } else {
+                        console.log("ERROR");
+                    }
+                    res.render("index", {body: parsedData, body2: parsedData2, leagues: leagues, teams: teams});
+                });
             });
         });
     });
@@ -121,9 +153,12 @@ app.get("/fav_teams", function(req, res) {
     });
 });
 
-app.get("/standings", function(req, res) {
+app.get("/standings/leagues/:league_name", function(req, res) {
+    var leagueName = req.params.league_name;
+    var leagueID = league_id[leagueName];
+    
     var options = {
-        url: 'https://api.football-data.org/v2/competitions/2021/standings',
+        url: 'https://api.football-data.org/v2/competitions/' + leagueID + '/standings',
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -134,8 +169,54 @@ app.get("/standings", function(req, res) {
     request(options, function(error, response, body){
         if (!error && response.statusCode == 200) {
             var parsedData = JSON.parse(body);
-            res.render("standings", {body: parsedData});
-            console.log(parsedData);
+            res.render("standings", {body: parsedData, league_name: leagueName});
+        } else {
+            console.log("ERROR");
+        }
+    });
+});
+
+// app.get("/teams", function(req, res){
+//     var options = {
+//         url: 'https://api.football-data.org/v2/competitions/2001/matches',
+//         method: 'GET',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Accept-Charset': 'utf-8',
+//             "X-Auth-Token": "788a449190624519aac963d1092782bb"
+//         }
+//     };
+//     League.find({}, function(error, leagues){
+//         Team.find({}, function(error, teams) {
+//             request(options, function(error, response, body){
+//                 if (!error && response.statusCode == 200) {
+//                     var parsedData = JSON.parse(body);
+//                     res.render("teams", {body: parsedData, leagues: leagues, teams: teams});
+//                 } else {
+//                     console.log("ERROR");
+//                 }
+//             });
+//         });
+//     });
+// });
+
+app.get("/testinfo", function(req, res) {
+    var leagueName = req.params.league_name;
+    var leagueID = league_id[leagueName];
+    
+    var options = {
+        url: 'https://api.football-data.org/v2/competitions',
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Accept-Charset': 'utf-8',
+            "X-Auth-Token": "788a449190624519aac963d1092782bb"
+        }
+    }
+    request(options, function(error, response, body){
+        if (!error && response.statusCode == 200) {
+            var parsedData = JSON.parse(body);
+            res.send(parsedData);
         } else {
             console.log("ERROR");
         }

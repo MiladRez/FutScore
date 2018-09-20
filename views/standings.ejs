@@ -1,7 +1,17 @@
 <% include ./partials/header %>
-        <h1>Table Standings!</h1>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/fav_leagues.css"/>
+        <center><h1><%= league_name %> Table Standings!</h1></center>
     </head>
     <body>
+        
+        <div class="ui green fixed inverted menu">
+            <div class="ui container">
+                <div class="header item"><i class="futbol icon" style="font-size: 2em;"></i><h2 style="margin-top: -2px !important;">FutScore</h2></div>
+                <a href="/" class="item">Home</a>
+                <a href="/fav_leagues" class="item">My Leagues</a>
+                <a href="/fav_teams" class="item">My Teams</a>
+            </div>
+        </div>
         <center>
         <table class="ui selectable celled table" style="width: 80%; text-align: center;">
             <thead>
