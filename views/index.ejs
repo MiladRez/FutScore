@@ -6,6 +6,7 @@
         
         <body>
             
+            <!-- nav bar -->
             <div class="ui green fixed inverted menu">
                 <div class="ui container">
                     <div class="header item"><i class="futbol icon" style="font-size: 2em;"></i><h2 style="margin-top: -2px !important;">FutScore</h2></div>
@@ -14,6 +15,11 @@
                     <a href="/fav_teams" class="item">My Teams</a>
                 </div>
             </div>
+            
+            <!-- Displays message if there are no current live matches. -->
+            <% if(body["data"]["match"].length < 1) { %>
+                <h2><center>There are currently no live matches.</center></h2>
+            <% } %>
             
             <center>
                 

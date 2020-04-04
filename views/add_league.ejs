@@ -6,6 +6,7 @@
         
         <body>
             
+            <!-- nav bar -->
             <div class="ui green fixed inverted menu">
                 <div class="ui container">
                     <div class="header item"><i class="futbol icon" style="font-size: 2em;"></i><h2 style="margin-top: -2px !important;">FutScore</h2></div>
@@ -24,6 +25,8 @@
                     </button>
                 </div>
             </form>
+
+            <!--  calls the autocomplete.js script which has the suggested leagues/teams dropdown functionality -->
             <script src="/autocomplete.js"></script>
             <script>
                 var newArray = "<%= leagues %>";

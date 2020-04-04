@@ -4,13 +4,15 @@ var request = require("request"),
     mongoose = require("mongoose"),
     app = express();
     
-mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true }); 
+mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
+
+//Arrays of top leagues and teams used as dropdown suggestions
 var leaguesArray = ["UEFA Champions League", "FIFA World Cup", "Primera Division", "Serie A", "Ligue 1", "Bundesliga", "Primeira Liga", "Eredivisie",
                     "Série A", "Premier League", "Championship", "European Championship"];
                     
@@ -36,21 +38,18 @@ var league_id = {"Bundesliga": 2002, "Eredivisie": 2003, "Brazilian League": 201
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
-var leagueSchema = new mongoose.Schema({
-    league_name: String
-});
-
+var leagueSchema = new mongoose.Schema({ league_name: String });
 var League = mongoose.model("League", leagueSchema);
 
-var teamSchema = new mongoose.Schema({
-    team_name: String
-});
-
+var teamSchema = new mongoose.Schema({ team_name: String });
 var Team = mongoose.model("Team", teamSchema);
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
+
+// Sets up the required APIs and renders the main Home Page with all the live match scores
 app.get("/", function(req, res){
+    // football-data.org api config
     var options = {
         url: 'https://api.football-data.org/v2/competitions/2001/matches',
         method: 'GET',
@@ -60,7 +59,8 @@ app.get("/", function(req, res){
             "X-Auth-Token": "788a449190624519aac963d1092782bb"
         }
     }
-    var url = "http://livescore-api.com/api-client/scores/live.json?key=fyZ6Y0JVL0azKSnb&secret=qMKEBfegENcJK0U0yU7wVRsGRCfCuCOV";
+    // livescore-api.com config (change the 'key' and 'secret' when using a new account)
+    var url = "http://livescore-api.com/api-client/scores/live.json?key=EErbxKvbb2YpruVU&secret=K9TG6snABVsWVJ4zowKVhg6si5RKANEk";
     
     League.find({}, function(error, leagues){
         Team.find({}, function(error, teams) {
@@ -83,6 +83,54 @@ app.get("/", function(req, res){
     });
 });
 
+// Renders the Favourite Leages page by retrieving the leagues located in db
+app.get("/fav_leagues", function(req, res) {
+    League.find({}, function(error, leagues) {
+        if (error) {
+            console.log("ERROR!");
+        } else {
+            res.render("fav_leagues", {leagues: leagues});
+        }   
+    });
+});
+
+// Renders the Favourite Teams page by retrieving the teams located in the db
+app.get("/fav_teams", function(req, res) {
+    Team.find({}, function(error, teams) {
+        if (error) {
+            console.log("ERROR!");
+        } else {
+            res.render("fav_teams", {teams: teams});
+        }   
+    });
+});
+
+// Renders the league standings page corresponding to the league chosen
+app.get("/standings/leagues/:league_name", function(req, res) {
+    var leagueName = req.params.league_name;
+    var leagueID = league_id[leagueName];
+    
+    // football-data.org API with modified url that points to league standings objects with the corresponding leagueID
+    var options = {
+        url: 'https://api.football-data.org/v2/competitions/' + leagueID + '/standings',
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Accept-Charset': 'utf-8',
+            "X-Auth-Token": "788a449190624519aac963d1092782bb"
+        }
+    }
+    request(options, function(error, response, body){
+        if (!error && response.statusCode == 200) {
+            var parsedData = JSON.parse(body);
+            res.render("standings", {body: parsedData, league_name: leagueName});
+        } else {
+            console.log("ERROR");
+        }
+    });
+});
+
+// POST request to add new league to db called from Add League page
 app.post("/add_league", function(req, res) {
     var leagueName = req.body.leaguename;
     
@@ -104,10 +152,12 @@ app.post("/add_league", function(req, res) {
     }
 });
 
+// Renders the Add League page
 app.get("/add_league", function(req, res) {
     res.render("add_league", {leagues: leaguesArray});
 });
 
+// POST request to add new team to db called from Add Team page
 app.post("/add_team", function(req, res) {
     var teamName = req.body.teamname;
     
@@ -129,100 +179,12 @@ app.post("/add_team", function(req, res) {
     }
 });
 
+// Renders the Add Team page
 app.get("/add_team", function(req, res) {
     res.render("add_team", {team: teamsArray});
 });
 
-app.get("/fav_leagues", function(req, res) {
-    League.find({}, function(error, leagues) {
-        if (error) {
-            console.log("ERROR!");
-        } else {
-            res.render("fav_leagues", {leagues: leagues});
-        }   
-    });
-});
-
-app.get("/fav_teams", function(req, res) {
-    Team.find({}, function(error, teams) {
-        if (error) {
-            console.log("ERROR!");
-        } else {
-            res.render("fav_teams", {teams: teams});
-        }   
-    });
-});
-
-app.get("/standings/leagues/:league_name", function(req, res) {
-    var leagueName = req.params.league_name;
-    var leagueID = league_id[leagueName];
-    
-    var options = {
-        url: 'https://api.football-data.org/v2/competitions/' + leagueID + '/standings',
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Accept-Charset': 'utf-8',
-            "X-Auth-Token": "788a449190624519aac963d1092782bb"
-        }
-    }
-    request(options, function(error, response, body){
-        if (!error && response.statusCode == 200) {
-            var parsedData = JSON.parse(body);
-            res.render("standings", {body: parsedData, league_name: leagueName});
-        } else {
-            console.log("ERROR");
-        }
-    });
-});
-
-// app.get("/teams", function(req, res){
-//     var options = {
-//         url: 'https://api.football-data.org/v2/competitions/2001/matches',
-//         method: 'GET',
-//         headers: {
-//             'Accept': 'application/json',
-//             'Accept-Charset': 'utf-8',
-//             "X-Auth-Token": "788a449190624519aac963d1092782bb"
-//         }
-//     };
-//     League.find({}, function(error, leagues){
-//         Team.find({}, function(error, teams) {
-//             request(options, function(error, response, body){
-//                 if (!error && response.statusCode == 200) {
-//                     var parsedData = JSON.parse(body);
-//                     res.render("teams", {body: parsedData, leagues: leagues, teams: teams});
-//                 } else {
-//                     console.log("ERROR");
-//                 }
-//             });
-//         });
-//     });
-// });
-
-app.get("/testinfo", function(req, res) {
-    var leagueName = req.params.league_name;
-    var leagueID = league_id[leagueName];
-    
-    var options = {
-        url: 'https://api.football-data.org/v2/competitions',
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Accept-Charset': 'utf-8',
-            "X-Auth-Token": "788a449190624519aac963d1092782bb"
-        }
-    }
-    request(options, function(error, response, body){
-        if (!error && response.statusCode == 200) {
-            var parsedData = JSON.parse(body);
-            res.send(parsedData);
-        } else {
-            console.log("ERROR");
-        }
-    });
-});
-
+// Removes the selected league and redirects to Favourite Leagues page
 app.get("/remove/leagues/:league_name", function(req, res){
     var leagueName = req.params.league_name;
     League.deleteOne({league_name: leagueName}, function(err, removedLeague){
@@ -238,6 +200,7 @@ app.get("/remove/leagues/:league_name", function(req, res){
     });
 });
 
+// Removes the selected team and redirects to Favourite Teams page
 app.get("/remove/teams/:team_name", function(req, res){
     var teamName = req.params.team_name;
     Team.deleteOne({team_name: teamName}, function(err, removedTeam){
@@ -253,6 +216,7 @@ app.get("/remove/teams/:team_name", function(req, res){
     });
 });
 
-app.listen(process.env.PORT, process.env.IP, function () {
+// Port is currently pointing to 3000 for local testing
+app.listen(3000, process.env.IP, function () {
     console.log("The FutScore server has started!");
 });
