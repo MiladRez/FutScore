@@ -60,25 +60,24 @@ app.get("/", function(req, res){
         }
     }
     // livescore-api.com config (change the 'key' and 'secret' when using a new account)
-    var url = "http://livescore-api.com/api-client/scores/live.json?key=EErbxKvbb2YpruVU&secret=K9TG6snABVsWVJ4zowKVhg6si5RKANEk";
+    // var url = "http://livescore-api.com/api-client/scores/live.json?key=EErbxKvbb2YpruVU&secret=K9TG6snABVsWVJ4zowKVhg6si5RKANEk";
     
     League.find({}, function(error, leagues){
         Team.find({}, function(error, teams) {
-            request(url, function(error, response, body){
+            // request(url, function(error, response, body){
                 request(options, function(error2, response2, body2){
                     if (!error2 && response2.statusCode == 200) {
                         var parsedData2 = JSON.parse(body2);
                     } else {
                         console.log("ERROR");
                     }
-                    if (!error && response.statusCode == 200) {
-                        var parsedData = JSON.parse(body);
-                    } else {
-                        console.log("ERROR");
-                    }
-                    res.render("index", {body: parsedData, body2: parsedData2, leagues: leagues, teams: teams});
+                    // if (!error && response.statusCode == 200) {
+                    //     var parsedData = JSON.parse(body);
+                    // } else {
+                    //     console.log("ERROR");
+                    // }
+                    res.render("index", {body2: parsedData2, leagues: leagues, teams: teams});
                 });
-            });
         });
     });
 });
