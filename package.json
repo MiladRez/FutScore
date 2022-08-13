@@ -1,16 +1,17 @@
 {
   "name": "milad",
   "version": "0.0.0",
-  "description": "A chat example to showcase how to use `socket.io` with a static `express` server with `async` for control flow.",
   "main": "server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MiladRez/FutScore.git"
   },
-  "author": "Mostafa Eweda <mo.eweda@gmail.com>",
+  "author": "Milad Rezaee <miladrezaee07@gmail.com>",
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "async": "^0.2.10",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
     "mongoose": "^5.9.7",
@@ -19,9 +20,12 @@
     "unirest": "^0.6.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "server": "nodemon server.js"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MiladRez/FutScore/issues"

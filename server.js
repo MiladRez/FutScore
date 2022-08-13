@@ -2,13 +2,15 @@ var request = require("request"),
     express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
+    cors = require("cors"),
     app = express();
     
 mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors())
 
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
@@ -47,9 +49,42 @@ var Team = mongoose.model("Team", teamSchema);
 
 ////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
 
-// Sets up the required APIs and renders the main Home Page with all the live match scores
-app.get("/", function(req, res){
-    // football-data.org api config
+// // Sets up the required APIs and renders the main Home Page with all the live match scores
+// app.get("/", function(req, res){
+//     // football-data.org api config
+//     var options = {
+//         url: 'https://api.football-data.org/v2/competitions/2001/matches',
+//         method: 'GET',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Accept-Charset': 'utf-8',
+//             "X-Auth-Token": "788a449190624519aac963d1092782bb"
+//         }
+//     }
+//     // livescore-api.com config (change the 'key' and 'secret' when using a new account)
+//     // var url = "http://livescore-api.com/api-client/scores/live.json?key=EErbxKvbb2YpruVU&secret=K9TG6snABVsWVJ4zowKVhg6si5RKANEk";
+    
+//     League.find({}, function(error, leagues){
+//         Team.find({}, function(error, teams) {
+//             // request(url, function(error, response, body){
+//                 request(options, function(error2, response2, body2){
+//                     if (!error2 && response2.statusCode == 200) {
+//                         var parsedData2 = JSON.parse(body2);
+//                     } else {
+//                         console.log("ERROR");
+//                     }
+//                     // if (!error && response.statusCode == 200) {
+//                     //     var parsedData = JSON.parse(body);
+//                     // } else {
+//                     //     console.log("ERROR");
+//                     // }
+//                     res.render("index", {body2: parsedData2, leagues: leagues, teams: teams});
+//                 });
+//         });
+//     });
+// });
+
+app.get("/test", (req, res) => {
     var options = {
         url: 'https://api.football-data.org/v2/competitions/2001/matches',
         method: 'GET',
@@ -59,28 +94,15 @@ app.get("/", function(req, res){
             "X-Auth-Token": "788a449190624519aac963d1092782bb"
         }
     }
-    // livescore-api.com config (change the 'key' and 'secret' when using a new account)
-    // var url = "http://livescore-api.com/api-client/scores/live.json?key=EErbxKvbb2YpruVU&secret=K9TG6snABVsWVJ4zowKVhg6si5RKANEk";
-    
-    League.find({}, function(error, leagues){
-        Team.find({}, function(error, teams) {
-            // request(url, function(error, response, body){
-                request(options, function(error2, response2, body2){
-                    if (!error2 && response2.statusCode == 200) {
-                        var parsedData2 = JSON.parse(body2);
-                    } else {
-                        console.log("ERROR");
-                    }
-                    // if (!error && response.statusCode == 200) {
-                    //     var parsedData = JSON.parse(body);
-                    // } else {
-                    //     console.log("ERROR");
-                    // }
-                    res.render("index", {body2: parsedData2, leagues: leagues, teams: teams});
-                });
-        });
-    });
-});
+    request(options, (err, response, body) => {
+        console.log("error: ", err);
+        console.log("statusCode: ", response && response.statusCode);
+        // console.log("body: ", JSON.parse(body));
+        var data = JSON.parse(body).matches
+        console.log("body: ", data);
+        res.send(data)
+    })
+})
 
 // Renders the Favourite Leages page by retrieving the leagues located in db
 app.get("/fav_leagues", function(req, res) {
@@ -216,6 +238,6 @@ app.get("/remove/teams/:team_name", function(req, res){
 });
 
 // Port is currently pointing to 3000 for local testing
-app.listen(3000, process.env.IP, function () {
+app.listen(8080, process.env.IP, function () {
     console.log("The FutScore server has started!");
 });
