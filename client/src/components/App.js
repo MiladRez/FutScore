@@ -3,19 +3,15 @@ import Dashboard from "./Dashboard";
 
 const App = () => {
 
-    const [data, setData] = useState()
+    const [data, setData] = useState();
 
     useEffect(() => {
-        fetch("http://localhost:8080/test")
+        fetch("http://localhost:8080/getFixtures")
             .then(response => response.json())
             .then(result => {
-                console.log(result)
-                setData(result)
-            })
-        console.log("Inside useEffect");
+                setData(result);
+            });
     }, []);
-
-    console.log(data ? data[0].id : "does not exist")
 
     return (
         <div>
@@ -30,7 +26,7 @@ const App = () => {
                     </div>
                 )) : <div>Loading...</div>
             } */}
-            <Dashboard matches={data} />
+            <Dashboard data={data} />
         </div>
     )
 }

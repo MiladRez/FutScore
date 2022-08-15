@@ -1,3 +1,5 @@
+const { reset } = require("nodemon");
+
 var request = require("request"),
     express = require("express"),
     bodyParser = require("body-parser"),
@@ -40,11 +42,11 @@ var league_id = {"Bundesliga": 2002, "Eredivisie": 2003, "Brazilian League": 201
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
-var leagueSchema = new mongoose.Schema({ league_name: String });
-var League = mongoose.model("League", leagueSchema);
+var favLeaguesSchema = new mongoose.Schema({ league_name: String });
+var FavLeagues = mongoose.model("League", favLeaguesSchema);
 
-var teamSchema = new mongoose.Schema({ team_name: String });
-var Team = mongoose.model("Team", teamSchema);
+var favTeamsSchema = new mongoose.Schema({ team_name: String });
+var FavTeams = mongoose.model("Team", favTeamsSchema);
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
@@ -84,6 +86,73 @@ var Team = mongoose.model("Team", teamSchema);
 //     });
 // });
 
+const getFavTeams = async () => {
+    const teams = await FavTeams.find({}, (err) => {
+        if (err) {
+            console.log("ERROR: Failed to fetch favourite teams from database.")
+            return
+        }
+    })
+    return teams;
+}
+
+const getFavLeagues = async () => {
+    const leagues = await FavLeagues.find({}, (err) => {
+        // return !err ? leagues : console.log("ERROR: Failed to fetch favourite leagues from database.")
+        if (err) {
+            console.log("ERROR: Failed to fetch favourite leagues from database.")
+            return
+        }
+    })
+    return leagues;
+}
+
+const getCurrentDate = () => {
+    // current date
+    let date_ob = new Date();
+    // adjust 0 before single digit date
+    let day = ("0" + date_ob.getDate()).slice(-2);
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    // current year
+    let year = date_ob.getFullYear();
+
+    // date in YYYY-MM-DD format
+    let date = year + "-" + month + "-" + day;
+
+    return date;
+}
+
+app.get("/getFixtures", (req, res) => {
+
+    let date = getCurrentDate();
+
+    const options = {
+        method: 'GET',
+        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
+        // qs: {timezone: "America/Toronto"},
+        qs: {date: "2022-08-14"},
+        headers: {
+            'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
+            'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+            useQueryString: true
+        }
+    };
+
+    request(options, (err, requestResponse, body) => {
+        console.log("error: ", err);
+        console.log("statusCode: ", requestResponse && requestResponse.statusCode)
+
+        var data = JSON.parse(body).response;
+
+        (async () => {
+            const favLeagues = await getFavLeagues();
+            const favTeams = await getFavTeams();
+            res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues})
+        })();
+    })
+})
+
 app.get("/test", (req, res) => {
     var options = {
         url: 'https://api.football-data.org/v2/competitions/2001/matches',
@@ -98,9 +167,13 @@ app.get("/test", (req, res) => {
         console.log("error: ", err);
         console.log("statusCode: ", response && response.statusCode);
         // console.log("body: ", JSON.parse(body));
-        var data = JSON.parse(body).matches
-        console.log("body: ", data);
-        res.send(data)
+        var data = JSON.parse(body);
+        // console.log("body: ", data);
+        (async () => {
+            const favLeagues = await getFavLeagues();
+            const favTeams = await getFavTeams();
+            res.send({"data": data, "favLeagues": favLeagues, "favTeams": favTeams})
+        })();
     })
 })
 
