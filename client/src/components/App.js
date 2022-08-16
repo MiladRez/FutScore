@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Dashboard from "./Dashboard";
+import "../styles/App.css";
 
 const App = () => {
 

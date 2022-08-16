@@ -9,14 +9,21 @@
 
 .matchRow {
     display: grid;
-    grid-template-columns: 1fr 50px 80px 50px 1fr;
+    grid-template-columns: 50px 1fr 50px 80px 50px 1fr 50px;
     align-items: center;
 }
 
-.matchScore {
+/* For displaying match time with score in the middle */
+/* .matchScore {
     display: flex;
     flex-direction: column;
     width: 60px;
+    font-size: 15px;
+} */
+
+/* For displaying match time on the left  */
+.matchScore {
+    font-size: 16px;
 }
 
 .matchDisplay {
@@ -50,16 +57,27 @@ td.teamLogo {
     color: white;
 }
 
-.ui.table thead {
-    background-color: #555a63;
-}
-
 .dashboardPage {
     padding-bottom: 30px;
 }
 
-.ui.green.circular.label {
+/* For displaying match time with score in the middle */
+/* .ui.green.circular.label {
     padding: 4px 4px 4px 4px !important;
     min-height: 1em;
     margin-top: 4px;
+} */
+
+/* For displaying match time on the left */
+.ui.green.circular.label {
+    padding: 8px !important;
+}
+
+.ui.table thead th {
+    background-color: #3a3d42;
+    color: white;
+}
+
+tr {
+    border-bottom: 1px solid #3a3d42;
 }

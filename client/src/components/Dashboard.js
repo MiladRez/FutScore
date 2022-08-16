@@ -9,7 +9,6 @@ const Dashboard = ({ data }) => {
     const [favLeagues, setFavLeagues] = useState([]);
 
     const [favTeamsMatches, setFavTeamsMatches] = useState([]);
-    const [favLeaguesMatches, setFavLeaguesMatches] = useState([]);
 
     const getLeagueMatches = (league) => {
         return matches.flatMap(match => (
@@ -27,13 +26,10 @@ const Dashboard = ({ data }) => {
                 (favTeams.includes(match.teams.home.name) || favTeams.includes(match.teams.away.name)) ?
                     match : []
             )))
-            setFavLeaguesMatches(favLeagues.map(league => (
-                {
-                    id: league.id,
-                    name: league.name,
-                    matches: getLeagueMatches(league)
-                }
-            )))
+            
+            favLeagues.map(league => (
+                league.matches = getLeagueMatches(league)
+            ))
         }
     }, [data, matches]);
 
@@ -41,7 +37,7 @@ const Dashboard = ({ data }) => {
         console.log("Team name: ", matches[149].teams.home.name);
         console.log("Is favourite team: ", favTeams.includes(matches[149].teams.home.name));
 
-        console.log(favLeaguesMatches)
+        console.log(favLeagues)
     }
 
     return (
@@ -57,12 +53,14 @@ const Dashboard = ({ data }) => {
                         <tbody>
                             {favTeamsMatches.map(match => (
                                 <tr className="matchRow" key={match.fixture.id}>
+                                    <td><center><div className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</div></center></td>
                                     <td className="homeTeam"><div className="matchDisplay">{match.teams.home.name}</div></td>
                                     <td className="teamLogo"><img className="teamLogoImg" alt="home team logo" src={match.teams.home.logo} /></td>
-                                    <center><td className="matchScore">
+                                    {/* <center><td className="matchScore">
                                         <center><div className="matchDisplay">{match.score.fulltime.home} - {match.score.fulltime.away}</div></center>
                                         <div className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</div>
-                                    </td></center>
+                                    </td></center> */}
+                                    <td><center><div className="matchScore">{match.score.fulltime.home} - {match.score.fulltime.away}</div></center></td>
                                     <td className="teamLogo"><img className="teamLogoImg" alt="away team logo" src={match.teams.away.logo} /></td>
                                     <td className="awayTeam"><div className="matchDisplay">{ match.teams.away.name }</div></td>
                                 </tr>
@@ -73,29 +71,31 @@ const Dashboard = ({ data }) => {
                 : <h2 style={{ "marginTop": "150px" }}>There are currently no live matches</h2>
             }
 
-            {favLeaguesMatches && favLeaguesMatches.length > 0 ?
-                favLeaguesMatches.map(league => (
-                    <center>
-                        <table className="ui fixed table tableWidth" key={league.id}>
+            {favLeagues && favLeagues.length > 0 ?
+                favLeagues.map(league => (
+                    <center key={ league.id }>
+                        <table className="ui fixed table tableWidth">
                             <thead>
                                 <tr>
-                                    <th colSpan="1"><center>{ league.name }</center></th>
+                                    <th colSpan="1"><center>{ league.country } - { league.name }</center></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {league.matches.map(match => (
-                                    <tr className="matchRow" key={ match.fixture.id }>
+                                {league.matches && league.matches.map(match => (
+                                    <tr className="matchRow" key={match.fixture.id}>
+                                        <td><center><div className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</div></center></td>
                                         <td className="homeTeam"><div className="matchDisplay">{match.teams.home.name}</div></td>
                                         <td className="teamLogo"><img className="teamLogoImg" alt="home team logo" src={match.teams.home.logo} /></td>
-                                        <center><td className="matchScore">
+                                        {/* <center><td className="matchScore">
                                             <center><div className="matchDisplay">{match.score.fulltime.home} - {match.score.fulltime.away}</div></center>
                                             <div className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</div>
-                                        </td></center>
+                                        </td></center> */}
+                                        <td><center><div className="matchScore">{match.score.fulltime.home} - {match.score.fulltime.away}</div></center></td>
                                         <td className="teamLogo"><img className="teamLogoImg" alt="away team logo" src={match.teams.away.logo} /></td>
                                         <td className="awayTeam"><div className="matchDisplay">{ match.teams.away.name }</div></td>
                                     </tr>
                                 ))}
-                                {league.matches.length < 1 ?
+                                {league.matches && league.matches.length < 1 ?
                                     <tr>
                                         <td colSpan="4"><center>No live matches</center></td>
                                     </tr>
