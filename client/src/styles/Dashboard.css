@@ -1,3 +1,65 @@
 .ui.fixed.table.main {
-    margin-top: 75px;
+    margin-top: 100px;
+}
+
+.ui.fixed.table.tableWidth {
+    width: 55%;
+    margin-bottom: 30px;
+}
+
+.matchRow {
+    display: grid;
+    grid-template-columns: 1fr 50px 80px 50px 1fr;
+    align-items: center;
+}
+
+.matchScore {
+    display: flex;
+    flex-direction: column;
+    width: 60px;
+}
+
+.matchDisplay {
+    display: inline;
+}
+
+.teamLogoImg {
+    height: 40px;
+    width: 40px;
+    border-bottom: none;
+}
+
+.ui.table td.homeTeam {
+    text-align: right;
+}
+
+.ui.table td.awayTeam {
+    text-align: left;
+}
+
+.ui.fixed.table tr td {
+    border: none;
+}
+
+td.teamLogo {
+    display: flex;
+    justify-content: center;
+}
+.ui.table {
+    background-color: #2b2e33;
+    color: white;
+}
+
+.ui.table thead {
+    background-color: #555a63;
+}
+
+.dashboardPage {
+    padding-bottom: 30px;
+}
+
+.ui.green.circular.label {
+    padding: 4px 4px 4px 4px !important;
+    min-height: 1em;
+    margin-top: 4px;
 }

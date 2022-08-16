@@ -11,14 +11,10 @@ const Dashboard = ({ data }) => {
     const [favTeamsMatches, setFavTeamsMatches] = useState([]);
     const [favLeaguesMatches, setFavLeaguesMatches] = useState([]);
 
-    let noLiveMatches = true;
-
-    // const [noLiveMatches, setNoLiveMatches] = useState(true);
-
     const getLeagueMatches = (league) => {
-        return matches.map(match => {
-            match.league.id = league.id
-        })
+        return matches.flatMap(match => (
+            (match.league.id === league.id) ? match : []
+        ))
     }
 
     useEffect(() => {
@@ -27,12 +23,16 @@ const Dashboard = ({ data }) => {
             setFavTeams(data.favTeams.map(team => team.team_name));
             setFavLeagues(data.favLeagues);
             
-            setFavTeamsMatches(matches.map(match => (
+            setFavTeamsMatches(matches.flatMap(match => (
                 (favTeams.includes(match.teams.home.name) || favTeams.includes(match.teams.away.name)) ?
-                    match : null
+                    match : []
             )))
             setFavLeaguesMatches(favLeagues.map(league => (
-                    league.name, getLeagueMatches(league)
+                {
+                    id: league.id,
+                    name: league.name,
+                    matches: getLeagueMatches(league)
+                }
             )))
         }
     }, [data, matches]);
@@ -41,71 +41,70 @@ const Dashboard = ({ data }) => {
         console.log("Team name: ", matches[149].teams.home.name);
         console.log("Is favourite team: ", favTeams.includes(matches[149].teams.home.name));
 
-        console.log(favTeamsMatches[0])
+        console.log(favLeaguesMatches)
     }
 
     return (
-        <div>
+        <div className="dashboardPage">
             <NavBar />
 
-            {
-                matches && matches.length > 0 ? 
-                    <table className="ui fixed table main">
+            {favTeamsMatches && favTeamsMatches.length > 0 ? 
+                <center>
+                    <table className="ui fixed table main tableWidth">
                         <thead>
-                            <tr>
-                                <th colSpan="4">Favourite Teams</th>
-                            </tr>
+                            <tr><th colSpan="1"><center>Favourite Teams</center></th></tr>
                         </thead>
                         <tbody>
-                            {
-                                matches.map(match => (
-                                    (favTeams.includes(match.teams.home.name) || favTeams.includes(match.teams.away.name)) ?
-                                        <tr key={ match.fixture.id }>
-                                            <td><a className="ui green circular label">{ match.fixture.status.elapsed ? match.fixture.status.elapsed : 0 }</a></td>
-                                            <td>{ match.teams.home.name }</td>
-                                            <td>{ match.score.fulltime.home } : { match.score.fulltime.away }</td>
-                                            <td>{ match.teams.away.name }</td>
-                                        </tr>
-                                    : null
-                                ))
-                            }
+                            {favTeamsMatches.map(match => (
+                                <tr className="matchRow" key={match.fixture.id}>
+                                    <td className="homeTeam"><div className="matchDisplay">{match.teams.home.name}</div></td>
+                                    <td className="teamLogo"><img className="teamLogoImg" alt="home team logo" src={match.teams.home.logo} /></td>
+                                    <center><td className="matchScore">
+                                        <center><div className="matchDisplay">{match.score.fulltime.home} - {match.score.fulltime.away}</div></center>
+                                        <div className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</div>
+                                    </td></center>
+                                    <td className="teamLogo"><img className="teamLogoImg" alt="away team logo" src={match.teams.away.logo} /></td>
+                                    <td className="awayTeam"><div className="matchDisplay">{ match.teams.away.name }</div></td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
+                </center>
                 : <h2 style={{ "marginTop": "150px" }}>There are currently no live matches</h2>
             }
 
-            {
-                matches && matches.length > 0 ?
-                    favLeagues.map(league => (
-                        <table className="ui fixed table">
+            {favLeaguesMatches && favLeaguesMatches.length > 0 ?
+                favLeaguesMatches.map(league => (
+                    <center>
+                        <table className="ui fixed table tableWidth" key={league.id}>
                             <thead>
                                 <tr>
-                                    <th colSpan="4">{ league.name }</th>
+                                    <th colSpan="1"><center>{ league.name }</center></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {   
-                                    matches.map(match => (
-                                        match.league.name === league.name && match.league.id == league.id ?
-                                            <tr key={ match.fixture.id }>
-                                                <td><a className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</a></td>
-                                                <td>{match.teams.home.name}</td>
-                                                <td>{match.score.fulltime.home} : {match.score.fulltime.away}</td>
-                                                <td>{match.teams.away.name}</td>
-                                            </tr>
-                                        : null
-                                    ))
-                                }
-                                {
-                                    noLiveMatches ?
-                                        <tr>
-                                            <td>No live matches</td>
-                                        </tr>
+                                {league.matches.map(match => (
+                                    <tr className="matchRow" key={ match.fixture.id }>
+                                        <td className="homeTeam"><div className="matchDisplay">{match.teams.home.name}</div></td>
+                                        <td className="teamLogo"><img className="teamLogoImg" alt="home team logo" src={match.teams.home.logo} /></td>
+                                        <center><td className="matchScore">
+                                            <center><div className="matchDisplay">{match.score.fulltime.home} - {match.score.fulltime.away}</div></center>
+                                            <div className="ui green circular label">{match.fixture.status.elapsed ? match.fixture.status.elapsed : 0}</div>
+                                        </td></center>
+                                        <td className="teamLogo"><img className="teamLogoImg" alt="away team logo" src={match.teams.away.logo} /></td>
+                                        <td className="awayTeam"><div className="matchDisplay">{ match.teams.away.name }</div></td>
+                                    </tr>
+                                ))}
+                                {league.matches.length < 1 ?
+                                    <tr>
+                                        <td colSpan="4"><center>No live matches</center></td>
+                                    </tr>
                                     : null
                                 }
                             </tbody>
                         </table>   
-                    ))
+                    </center>
+                ))
                 : <h2 style={{ "marginTop": "150px" }}>There are currently no live matches</h2>
             }
         </div>
