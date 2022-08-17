@@ -24,34 +24,39 @@
 /* For displaying match time on the left  */
 .matchScore {
     font-size: 16px;
+    justify-content: center;
 }
 
 .matchDisplay {
     display: inline;
+    text-align: center;
 }
 
 .teamLogoImg {
-    height: 40px;
-    width: 40px;
+    height: 35px;
+    width: 35px;
     border-bottom: none;
 }
 
 .ui.table td.homeTeam {
-    text-align: right;
+    justify-content: right;
 }
 
 .ui.table td.awayTeam {
-    text-align: left;
+    justify-content: left;
 }
 
 .ui.fixed.table tr td {
     border: none;
+    height: 70px;
+    display: flex;
+    align-items: center;
 }
 
 td.teamLogo {
-    display: flex;
     justify-content: center;
 }
+
 .ui.table {
     background-color: #2b2e33;
     color: white;
@@ -59,6 +64,9 @@ td.teamLogo {
 
 .dashboardPage {
     padding-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* For displaying match time with score in the middle */
@@ -76,8 +84,14 @@ td.teamLogo {
 .ui.table thead th {
     background-color: #3a3d42;
     color: white;
+    height: 45px;
 }
 
 tr {
     border-bottom: 1px solid #3a3d42;
+}
+
+.ui.fixed.table tr td.noLiveMatches {
+    justify-content: center;
+    height: 40px;
 }
