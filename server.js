@@ -130,8 +130,7 @@ app.get("/getFixtures", (req, res) => {
     const options = {
         method: 'GET',
         url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-        // qs: {timezone: "America/Toronto"},
-        qs: {date: "2022-08-14"},
+        qs: {date: "2022-08-14", timezone: "America/Toronto"},
         headers: {
             'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
             'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
@@ -146,8 +145,8 @@ app.get("/getFixtures", (req, res) => {
         var data = JSON.parse(body).response;
 
         (async () => {
-            const favLeagues = await getFavLeagues();
             const favTeams = await getFavTeams();
+            const favLeagues = await getFavLeagues();
             res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues})
         })();
     })
