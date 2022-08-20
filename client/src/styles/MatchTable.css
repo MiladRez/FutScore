@@ -1,0 +1,15 @@
+.ui.fixed.table.tableWidth {
+    width: 55%;
+    margin-bottom: 30px;
+}
+
+.ui.table {
+    background-color: #2b2e33;
+    color: white;
+}
+
+.ui.table thead th {
+    background-color: #3a3d42;
+    color: white;
+    height: 45px;
+}

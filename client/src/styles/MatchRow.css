@@ -1,0 +1,52 @@
+tr {
+    border-bottom: 1px solid #3a3d42;
+}
+
+.matchRow {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px 80px 50px 1fr 50px;
+    align-items: center;
+}
+
+.ui.table td.homeTeam {
+    justify-content: right;
+}
+
+td.teamLogo {
+    justify-content: center;
+}
+
+.teamLogoImg {
+    height: 35px;
+    width: 35px;
+    border-bottom: none;
+}
+
+.matchScore {
+    font-size: 16px;
+    justify-content: center;
+}
+
+.ui.table td.awayTeam {
+    justify-content: left;
+}
+
+.teamName {
+    display: inline;
+    text-align: center;
+}
+
+.ui.fixed.table tr td {
+    border: none;
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.ui.green.circular.label {
+    padding: 8px !important;
+}
+
+.ui.circular.label {
+    background-color: #3a3d42;
+}

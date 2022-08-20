@@ -5,6 +5,7 @@ var request = require("request"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     cors = require("cors"),
+    data = require("./todaysMatches.json"),
     app = express();
     
 mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
@@ -51,52 +52,42 @@ var FavTeams = mongoose.model("Team", favTeamsSchema);
 
 ////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
 
-// // Sets up the required APIs and renders the main Home Page with all the live match scores
-// app.get("/", function(req, res){
-//     // football-data.org api config
-//     var options = {
-//         url: 'https://api.football-data.org/v2/competitions/2001/matches',
-//         method: 'GET',
-//         headers: {
-//             'Accept': 'application/json',
-//             'Accept-Charset': 'utf-8',
-//             "X-Auth-Token": "788a449190624519aac963d1092782bb"
-//         }
-//     }
-//     // livescore-api.com config (change the 'key' and 'secret' when using a new account)
-//     // var url = "http://livescore-api.com/api-client/scores/live.json?key=EErbxKvbb2YpruVU&secret=K9TG6snABVsWVJ4zowKVhg6si5RKANEk";
-    
-//     League.find({}, function(error, leagues){
-//         Team.find({}, function(error, teams) {
-//             // request(url, function(error, response, body){
-//                 request(options, function(error2, response2, body2){
-//                     if (!error2 && response2.statusCode == 200) {
-//                         var parsedData2 = JSON.parse(body2);
-//                     } else {
-//                         console.log("ERROR");
-//                     }
-//                     // if (!error && response.statusCode == 200) {
-//                     //     var parsedData = JSON.parse(body);
-//                     // } else {
-//                     //     console.log("ERROR");
-//                     // }
-//                     res.render("index", {body2: parsedData2, leagues: leagues, teams: teams});
-//                 });
-//         });
-//     });
-// });
-
-const getFavTeams = async () => {
+const getFavTeams = async (matches) => {
     const teams = await FavTeams.find({}, (err) => {
         if (err) {
             console.log("ERROR: Failed to fetch favourite teams from database.")
             return
         }
     })
+    teams.map(team => (
+        team.match = getTeamMatch(team, matches)
+    ))
     return teams;
 }
 
-const getFavLeagues = async () => {
+const getTeamMatch = (team, matches) => {
+    console.log(team["team_id"])
+    for (let match of matches) {
+        if (match.teams.home.id === team.team_id || match.teams.away.id === team.team_id) {
+            console.log("match")
+            return match;
+        }  
+    }
+    return null;
+}
+
+// Adds match for each team if they play that day in a new field (match) inside favTeams
+const getFavTeamsMatches = (favTeams) => {
+    return Array.from(
+        new Set(
+            favTeams.flatMap(team => (
+                team.match ? team.match : []
+            ))
+        )
+    )
+}
+
+const getFavLeagues = async (matches) => {
     const leagues = await FavLeagues.find({}, (err) => {
         // return !err ? leagues : console.log("ERROR: Failed to fetch favourite leagues from database.")
         if (err) {
@@ -104,7 +95,46 @@ const getFavLeagues = async () => {
             return
         }
     })
+    // Adds matches for each league in a new field (matches) inside favLeagues
+    leagues.map(league => (
+        league.matches = getLeagueMatches(league, matches)
+    ))
     return leagues;
+}
+
+const getLeagueMatches = (league, matches) => {
+    return matches.flatMap(match => (
+        (match.league.id === league.id) ? match : []
+    ))
+}
+
+const getAllOtherLeaguesMatches = (matches, favLeagues) => {
+    const map = new Map();
+    const favLeaguesIds = favLeagues.map(league => league.id);
+
+    for (let match of matches) {
+        if (!favLeaguesIds.includes(match.league.id)) {
+            if (map.has(match.league.id)) {
+                map.set(
+                    match.league.id, {
+                        ...map.get(match.league.id),
+                        matches: [...map.get(match.league.id).matches, match]
+                    }
+                )
+            } else {
+                map.set(
+                    match.league.id, {
+                        id: match.league.id,
+                        name: match.league.name,
+                        country: match.league.country,
+                        flag: match.league.flag,
+                        matches: [match]
+                    }
+                );
+            }
+        }
+    }
+    return [...map.values()];
 }
 
 const getCurrentDate = () => {
@@ -123,33 +153,57 @@ const getCurrentDate = () => {
     return date;
 }
 
+// app.get("/getFixtures", (req, res) => {
+
+//     let date = getCurrentDate();
+
+//     const options = {
+//         method: 'GET',
+//         url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
+//         qs: {date: "2022-08-20", timezone: "America/Toronto"},
+//         headers: {
+//             'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
+//             'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+//             useQueryString: true
+//         }
+//     };
+
+//     request(options, (err, requestResponse, body) => {
+//         console.log("error: ", err);
+//         console.log("statusCode: ", requestResponse && requestResponse.statusCode)
+
+//         let data = JSON.parse(body).response;
+
+//         if (data.length > 200) {
+//             data = data.slice(0, 200);
+//         }
+
+//         (async () => {
+//             const favTeams = await getFavTeams();
+//             const favLeagues = await getFavLeagues();
+//             res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues})
+//         })();
+//     })
+// })
+
+// using data from todaysMatches.json
 app.get("/getFixtures", (req, res) => {
+    if (data.data.length > 200) {
+        smallData = data.data.slice(0, 200);
+    } else {
+        smallData = data
+    }
 
-    let date = getCurrentDate();
+    console.log(smallData.length);
 
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-        qs: {date: "2022-08-14", timezone: "America/Toronto"},
-        headers: {
-            'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
-            'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
-            useQueryString: true
-        }
-    };
+    (async () => {
+        const favTeams = await getFavTeams(smallData);
+        const favLeagues = await getFavLeagues(smallData);
+        const favTeamsMatches = await getFavTeamsMatches(favTeams);
+        const allOtherLeagues = await getAllOtherLeaguesMatches(smallData, favLeagues);
+        res.send({"data": smallData, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
+    })();
 
-    request(options, (err, requestResponse, body) => {
-        console.log("error: ", err);
-        console.log("statusCode: ", requestResponse && requestResponse.statusCode)
-
-        var data = JSON.parse(body).response;
-
-        (async () => {
-            const favTeams = await getFavTeams();
-            const favLeagues = await getFavLeagues();
-            res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues})
-        })();
-    })
 })
 
 app.get("/test", (req, res) => {
