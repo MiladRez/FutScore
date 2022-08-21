@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import "../styles/MatchRow.css";
 
 const MatchRow = ({ match }) => {
@@ -6,31 +7,97 @@ const MatchRow = ({ match }) => {
         switch (match.fixture.status.short) {
             case "1H":
             case "2H":
+            case "ET":
                 return (
-                    <td>
-                        <center>
-                            <div className="ui green circular label">
-                                {match.fixture.status.elapsed}
-                            </div>
-                        </center>
-                    </td>
+                    <div className="ui green circular label">
+                        {match.fixture.status.elapsed}
+                    </div>
+                )
+            case "HT":
+            case "P":
+            case "BT":
+            case "LIVE":
+                return (
+                    <div className="ui green circular label">
+                        {match.fixture.status.short}
+                    </div>
+                )
+            case "NS":
+                return (
+                    <div className="ui circular label NS">
+                        {match.fixture.status.short}
+                    </div>                  
                 )
             default:
                 return (
-                    <td>
-                        <center>
-                            <div className="ui circular label">
-                                {match.fixture.status.short}
-                            </div>
-                        </center>
-                    </td>
+                    <div className="ui circular label">
+                        {match.fixture.status.short}
+                    </div>
                 )                
+        }
+    }
+
+    const matchScore = () => {
+        let time = match.fixture.date;
+        time = DateTime.fromISO(time).toLocaleString(DateTime.TIME_SIMPLE)
+
+        let hour = time.split(":")[0];
+        let minute = time.split(":")[1].split(" ")[0];
+        let am_pm = time.split(":")[1].split(" ")[1];
+
+        switch (match.fixture.status.short) {
+            case "1H":
+            case "HT":
+            case "2H":
+            case "ET":
+            case "FT":
+            case "AET":
+            case "BT":
+            case "INT":
+            case "LIVE":
+                return (
+                    <div>
+                        {match.goals.home} - {match.goals.away}
+                    </div>
+                )
+            case "P":
+            case "PEN":
+                return (
+                    <div>
+                        <div>{match.goals.home} - {match.goals.away}</div>
+                        <div>{"("} {match.score.penalty.home} - {match.score.penalty.away} {")"}</div>
+                    </div>
+                )
+            case "TBD":
+            case "NS":
+                
+                return (
+                    <div>
+                        {time}
+                    </div>
+                )
+            case "SUSP":
+            case "PST":
+            case "CANC":
+            case "ABD":
+                return (
+                    <div className="cancelledMatch">
+                        {time}
+                    </div>
+                )
+            case "AWD":
+            case "WO":
+                return "3 - 0";
         }
     }
 
     return (
         <tr className="matchRow" key={match.fixture.id}>
-            {matchStatus()}
+            <td>
+                <center>
+                    {matchStatus()}
+                </center>
+            </td>
             <td className="homeTeam">
                 <div className="teamName">
                     {match.teams.home.name}
@@ -40,7 +107,7 @@ const MatchRow = ({ match }) => {
                 <img className="teamLogoImg" alt="home team logo" src={match.teams.home.logo} />
             </td>
             <td className="matchScore">
-                {match.score.fulltime.home} - {match.score.fulltime.away}
+                {matchScore()}
             </td>
             <td className="teamLogo">
                 <img className="teamLogoImg" alt="away team logo" src={match.teams.away.logo} />

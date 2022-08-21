@@ -4,7 +4,7 @@ tr {
 
 .matchRow {
     display: grid;
-    grid-template-columns: 50px 1fr 50px 80px 50px 1fr 50px;
+    grid-template-columns: 50px 1fr 50px 100px 50px 1fr 50px;
     align-items: center;
 }
 
@@ -47,6 +47,12 @@ td.teamLogo {
     padding: 8px !important;
 }
 
+.ui.circular.label.NS {
+    background-color: #e8bc4d;
+    color: black;
+}
+
 .ui.circular.label {
     background-color: #3a3d42;
+    color: #7c818a;
 }

@@ -53,23 +53,27 @@ var FavTeams = mongoose.model("Team", favTeamsSchema);
 ////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
 
 const getFavTeams = async (matches) => {
-    const teams = await FavTeams.find({}, (err) => {
+    let teams = await FavTeams.find({}, (err) => {
         if (err) {
             console.log("ERROR: Failed to fetch favourite teams from database.")
             return
         }
     })
+    // converts all mongoose objects to javascript objects
+    teams = teams.map(team => (team.toObject()))
+
+    // Adds matches for each league in a new field (matches) inside favLeagues
     teams.map(team => (
         team.match = getTeamMatch(team, matches)
     ))
+
     return teams;
 }
 
 const getTeamMatch = (team, matches) => {
-    console.log(team["team_id"])
     for (let match of matches) {
         if (match.teams.home.id === team.team_id || match.teams.away.id === team.team_id) {
-            console.log("match")
+            console.log("match ", team.team_id)
             return match;
         }  
     }
@@ -88,13 +92,16 @@ const getFavTeamsMatches = (favTeams) => {
 }
 
 const getFavLeagues = async (matches) => {
-    const leagues = await FavLeagues.find({}, (err) => {
+    let leagues = await FavLeagues.find({}, (err) => {
         // return !err ? leagues : console.log("ERROR: Failed to fetch favourite leagues from database.")
         if (err) {
             console.log("ERROR: Failed to fetch favourite leagues from database.")
             return
         }
     })
+    // converts all mongoose objects to javascript objects
+    leagues = leagues.map(league => (league.toObject()))
+
     // Adds matches for each league in a new field (matches) inside favLeagues
     leagues.map(league => (
         league.matches = getLeagueMatches(league, matches)
@@ -108,19 +115,23 @@ const getLeagueMatches = (league, matches) => {
     ))
 }
 
-const getAllOtherLeaguesMatches = (matches, favLeagues) => {
+const getAllOtherLeaguesMatches = (matches, favLeagues, limit) => {
     const map = new Map();
     const favLeaguesIds = favLeagues.map(league => league.id);
+    let numOfMatches = 0;
 
     for (let match of matches) {
+        if (numOfMatches >= limit) {
+            break;
+        }
         if (!favLeaguesIds.includes(match.league.id)) {
             if (map.has(match.league.id)) {
                 map.set(
                     match.league.id, {
-                        ...map.get(match.league.id),
-                        matches: [...map.get(match.league.id).matches, match]
-                    }
-                )
+                    ...map.get(match.league.id),
+                    matches: [...map.get(match.league.id).matches, match]
+                }
+                );
             } else {
                 map.set(
                     match.league.id, {
@@ -132,8 +143,11 @@ const getAllOtherLeaguesMatches = (matches, favLeagues) => {
                     }
                 );
             }
+            numOfMatches++;
         }
     }
+    console.log("length: ", [...map.values()].length)
+    console.log("numOfMatches: ", numOfMatches)
     return [...map.values()];
 }
 
@@ -153,58 +167,62 @@ const getCurrentDate = () => {
     return date;
 }
 
-// app.get("/getFixtures", (req, res) => {
-
-//     let date = getCurrentDate();
-
-//     const options = {
-//         method: 'GET',
-//         url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-//         qs: {date: "2022-08-20", timezone: "America/Toronto"},
-//         headers: {
-//             'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
-//             'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
-//             useQueryString: true
-//         }
-//     };
-
-//     request(options, (err, requestResponse, body) => {
-//         console.log("error: ", err);
-//         console.log("statusCode: ", requestResponse && requestResponse.statusCode)
-
-//         let data = JSON.parse(body).response;
-
-//         if (data.length > 200) {
-//             data = data.slice(0, 200);
-//         }
-
-//         (async () => {
-//             const favTeams = await getFavTeams();
-//             const favLeagues = await getFavLeagues();
-//             res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues})
-//         })();
-//     })
-// })
-
-// using data from todaysMatches.json
 app.get("/getFixtures", (req, res) => {
-    if (data.data.length > 200) {
-        smallData = data.data.slice(0, 200);
+
+    const test = false;
+
+    if (test) {
+        const matchesLimit = 200;
+
+        (async () => {
+            const favTeams = await getFavTeams(data.data);
+            const favLeagues = await getFavLeagues(data.data);
+            const favTeamsMatches = await getFavTeamsMatches(favTeams);
+            const allOtherLeagues = await getAllOtherLeaguesMatches(data.data, favLeagues, matchesLimit);
+            res.send({"data": data.data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
+        })();
+
     } else {
-        smallData = data
+        let date = getCurrentDate();
+
+        const options = {
+            method: 'GET',
+            url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
+            qs: {date: "2022-08-20", timezone: "America/Toronto"},
+            headers: {
+                'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
+                'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+                useQueryString: true
+            }
+        };
+
+        request(options, (err, requestResponse, body) => {
+            console.log("error: ", err);
+            console.log("statusCode: ", requestResponse && requestResponse.statusCode)
+
+            let data = JSON.parse(body).response;
+            // number of additional matches to display on initial render on Dashboard
+            const matchesLimit = 200;
+
+            (async () => {
+                const favTeams = await getFavTeams(data);
+                const favLeagues = await getFavLeagues(data);
+                const favTeamsMatches = await getFavTeamsMatches(favTeams);
+                const allOtherLeagues = await getAllOtherLeaguesMatches(data, favLeagues, matchesLimit);
+                res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
+            })();
+        })        
     }
-
-    console.log(smallData.length);
-
-    (async () => {
-        const favTeams = await getFavTeams(smallData);
-        const favLeagues = await getFavLeagues(smallData);
-        const favTeamsMatches = await getFavTeamsMatches(favTeams);
-        const allOtherLeagues = await getAllOtherLeaguesMatches(smallData, favLeagues);
-        res.send({"data": smallData, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
-    })();
-
 })
+
+// // using data from todaysMatches.json
+// app.get("/getFixtures", (req, res) => {
+//     // if (data.data.length > 200) {
+//     //     smallData = data.data.slice(0, 200);
+//     // } else {
+//     //     smallData = data
+//     // }
+// })
 
 app.get("/test", (req, res) => {
     var options = {
