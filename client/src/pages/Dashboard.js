@@ -1,7 +1,7 @@
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 import "../styles/Dashboard.css";
 import { useEffect, useState } from "react";
-import MatchTable from "./MatchTable";
+import MatchTable from "../components/MatchTable";
 
 const Dashboard = ({ data }) => {
 

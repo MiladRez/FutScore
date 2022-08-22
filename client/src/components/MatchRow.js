@@ -23,11 +23,7 @@ const MatchRow = ({ match }) => {
                     </div>
                 )
             case "NS":
-                return (
-                    <div className="ui circular label NS">
-                        {match.fixture.status.short}
-                    </div>                  
-                )
+                return null;
             default:
                 return (
                     <div className="ui circular label">
@@ -84,6 +80,8 @@ const MatchRow = ({ match }) => {
             case "AWD":
             case "WO":
                 return "3 - 0";
+            default:
+                return "TBD"
         }
     }
 

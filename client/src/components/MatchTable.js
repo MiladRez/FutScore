@@ -5,12 +5,11 @@ const MatchTable = (props) => {
 
     const tableHeader = () => {
         if (props.tableType === "favTeams") {
-            return "Favourite Matches";
+            return "Favourites";
         }
-        console.log(props.matchesList)
         return (
             <div className="tableHeader">
-                <img className="leagueFlag" alt="league flag" src={props.matchesList.flag} />
+                <img className="leagueFlag" alt="" src={props.matchesList.flag} />
                 {props.matchesList.country} - {props.matchesList.name}
             </div>
         )

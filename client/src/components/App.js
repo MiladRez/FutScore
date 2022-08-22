@@ -1,6 +1,8 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Dashboard from "./Dashboard";
+import Dashboard from "../pages/Dashboard";
 import "../styles/App.css";
+import FavLeagues from "../pages/FavLeagues";
 
 const App = () => {
 
@@ -15,20 +17,15 @@ const App = () => {
     }, []);
 
     return (
-        <div>
-            {/* {data ?
-                data.map(fixture => (
-                    <div>
-                        <div>{ fixture.id }</div>
-                        <div>{ fixture.status }</div>
-                        <div>{ fixture.stage }</div>
-                        <div>{ fixture.utcDate }</div>
-                        <div>{ fixture.lastUpdated }</div>
-                    </div>
-                )) : <div>Loading...</div>
-            } */}
-            <Dashboard data={data} />
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Dashboard data={data} />}>
+                    <Route path="myTeams" />
+                    <Route path="myLeagues" element={<FavLeagues leagues={data.favLeagues} />} />
+                    <Route path="*" />
+                </Route>
+            </Routes>
+        </BrowserRouter>
     )
 }
 

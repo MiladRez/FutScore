@@ -189,7 +189,7 @@ app.get("/getFixtures", (req, res) => {
         const options = {
             method: 'GET',
             url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-            qs: {date: "2022-08-21", timezone: "America/Toronto"},
+            qs: {date: date, timezone: "America/Toronto"},
             headers: {
                 'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
                 'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
