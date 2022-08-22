@@ -139,6 +139,7 @@ const getAllOtherLeaguesMatches = (matches, favLeagues, limit) => {
                         name: match.league.name,
                         country: match.league.country,
                         flag: match.league.flag,
+                        logo: match.league.logo,
                         matches: [match]
                     }
                 );
@@ -169,7 +170,7 @@ const getCurrentDate = () => {
 
 app.get("/getFixtures", (req, res) => {
 
-    const test = false;
+    const test = true;
 
     if (test) {
         const matchesLimit = 200;
@@ -188,7 +189,7 @@ app.get("/getFixtures", (req, res) => {
         const options = {
             method: 'GET',
             url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-            qs: {date: "2022-08-20", timezone: "America/Toronto"},
+            qs: {date: "2022-08-21", timezone: "America/Toronto"},
             headers: {
                 'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
                 'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',

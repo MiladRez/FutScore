@@ -4,12 +4,38 @@ tr {
 
 .matchRow {
     display: grid;
-    grid-template-columns: 50px 1fr 50px 100px 50px 1fr 50px;
+    grid-template-columns: 70px 1fr 55px 75px 55px 1fr 70px;
     align-items: center;
+}
+
+.matchStatus {
+    margin-left: 20px;
+}
+
+.ui.green.circular.label {
+    /* padding: 8px !important; */
+    width: 27.52px;
+    height: 24px;
+}
+
+.ui.circular.label.NS {
+    background-color: #e8bc4d;
+    color: black;
+    /* padding: 8px 7px 7px 7px !important; */
+}
+
+.ui.circular.label {
+    background-color: #3a3d42;
+    color: #7c818a;
 }
 
 .ui.table td.homeTeam {
     justify-content: right;
+}
+
+.homeTeamName {
+    display: inline;
+    text-align: right;
 }
 
 td.teamLogo {
@@ -27,13 +53,28 @@ td.teamLogo {
     justify-content: center;
 }
 
-.ui.table td.awayTeam {
-    justify-content: left;
+.matchScorePenalties {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.teamName {
+.pensShootoutScore {
+    font-size: 12px;
+}
+
+.cancelledMatch {
+    text-decoration: line-through;
+    color: #7c818a;
+}
+
+.ui.table td.awayTeam {
+    justify-content: flex-start;
+}
+
+.awayTeamName {
     display: inline;
-    text-align: center;
+    text-align: left;
 }
 
 .ui.fixed.table tr td {
@@ -41,18 +82,5 @@ td.teamLogo {
     height: 70px;
     display: flex;
     align-items: center;
-}
-
-.ui.green.circular.label {
-    padding: 8px !important;
-}
-
-.ui.circular.label.NS {
-    background-color: #e8bc4d;
-    color: black;
-}
-
-.ui.circular.label {
-    background-color: #3a3d42;
-    color: #7c818a;
+    padding: 0;
 }

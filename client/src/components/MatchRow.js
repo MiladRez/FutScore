@@ -39,11 +39,7 @@ const MatchRow = ({ match }) => {
 
     const matchScore = () => {
         let time = match.fixture.date;
-        time = DateTime.fromISO(time).toLocaleString(DateTime.TIME_SIMPLE)
-
-        let hour = time.split(":")[0];
-        let minute = time.split(":")[1].split(" ")[0];
-        let am_pm = time.split(":")[1].split(" ")[1];
+        time = DateTime.fromISO(time).toLocaleString(DateTime.TIME_SIMPLE).toLowerCase();
 
         switch (match.fixture.status.short) {
             case "1H":
@@ -63,9 +59,9 @@ const MatchRow = ({ match }) => {
             case "P":
             case "PEN":
                 return (
-                    <div>
+                    <div className="matchScorePenalties">
                         <div>{match.goals.home} - {match.goals.away}</div>
-                        <div>{"("} {match.score.penalty.home} - {match.score.penalty.away} {")"}</div>
+                        <div className="pensShootoutScore">{"("} {match.score.penalty.home} - {match.score.penalty.away} {")"}</div>
                     </div>
                 )
             case "TBD":
@@ -93,13 +89,11 @@ const MatchRow = ({ match }) => {
 
     return (
         <tr className="matchRow" key={match.fixture.id}>
-            <td>
-                <center>
+            <td className="matchStatus">
                     {matchStatus()}
-                </center>
             </td>
             <td className="homeTeam">
-                <div className="teamName">
+                <div className="homeTeamName">
                     {match.teams.home.name}
                 </div>
             </td>
@@ -113,7 +107,7 @@ const MatchRow = ({ match }) => {
                 <img className="teamLogoImg" alt="away team logo" src={match.teams.away.logo} />
             </td>
             <td className="awayTeam">
-                <div className="teamName">
+                <div className="awayTeamName">
                     {match.teams.away.name}
                 </div>
             </td>

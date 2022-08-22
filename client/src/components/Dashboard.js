@@ -33,20 +33,20 @@ const Dashboard = ({ data }) => {
             <NavBar />
 
             {favTeams && favTeams.length > 0 ?
-                <MatchTable tableHeader={"Favourite Teams"} tableType={"favTeams"} matchesList={[matches, favTeamsMatches]} />
+                <MatchTable tableType={"favTeams"} matchesList={[matches, favTeamsMatches]} />
                 : null
             }
 
             {favLeagues && favLeagues.length > 0 ?
                 favLeagues.map(league => (
-                    <MatchTable key={league.id} tableHeader={`${league.country}-${league.name}`} tableType={"favLeagues"} matchesList={league} />
+                    <MatchTable key={league.id} tableType={"favLeagues"} matchesList={league} />
                 ))
                 : null
             }
 
             {allOtherLeagues && allOtherLeagues.length > 0 ?
                 allOtherLeagues.map(league => (
-                    <MatchTable key={league.id} tableHeader={`${league.country}-${league.name}`} tableType={"allOtherLeagues"} matchesList={league} />
+                    <MatchTable key={league.id} tableType={"allOtherLeagues"} matchesList={league} />
                 ))
                 : null
             }
