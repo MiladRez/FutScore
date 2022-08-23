@@ -5,7 +5,10 @@ var request = require("request"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     cors = require("cors"),
+
     data = require("./todaysMatches.json"),
+    allLeaguesJSON = require("./allLeagues.json"),
+
     app = express();
     
 mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
@@ -13,6 +16,7 @@ mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: tr
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json())
 app.use(cors())
 
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
@@ -43,10 +47,19 @@ var league_id = {"Bundesliga": 2002, "Eredivisie": 2003, "Brazilian League": 201
 ////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
-var favLeaguesSchema = new mongoose.Schema({ league_name: String });
+var favLeaguesSchema = new mongoose.Schema({
+    id: Number,
+    name: String,
+    country: String,
+    flag: String,
+    logo: String
+});
 var FavLeagues = mongoose.model("League", favLeaguesSchema);
 
-var favTeamsSchema = new mongoose.Schema({ team_name: String });
+var favTeamsSchema = new mongoose.Schema({
+    team_id: Number,
+    name: String
+});
 var FavTeams = mongoose.model("Team", favTeamsSchema);
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
 
@@ -73,7 +86,6 @@ const getFavTeams = async (matches) => {
 const getTeamMatch = (team, matches) => {
     for (let match of matches) {
         if (match.teams.home.id === team.team_id || match.teams.away.id === team.team_id) {
-            console.log("match ", team.team_id)
             return match;
         }  
     }
@@ -216,38 +228,65 @@ app.get("/getFixtures", (req, res) => {
     }
 })
 
-// // using data from todaysMatches.json
-// app.get("/getFixtures", (req, res) => {
-//     // if (data.data.length > 200) {
-//     //     smallData = data.data.slice(0, 200);
-//     // } else {
-//     //     smallData = data
-//     // }
-// })
+app.get("/getAllLeagues", (req, res) => {
+    // const options = {
+    //     method: 'GET',
+    //     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
+    //     headers: {
+    //         'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
+    //         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+    //         useQueryString: true
+    //     }
+    // }
+    // request(options, (err, requestResponse, body) => {
+    //     let data = JSON.parse(body).response;
 
-app.get("/test", (req, res) => {
-    var options = {
-        url: 'https://api.football-data.org/v2/competitions/2001/matches',
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Accept-Charset': 'utf-8',
-            "X-Auth-Token": "788a449190624519aac963d1092782bb"
-        }
-    }
-    request(options, (err, response, body) => {
-        console.log("error: ", err);
-        console.log("statusCode: ", response && response.statusCode);
-        // console.log("body: ", JSON.parse(body));
-        var data = JSON.parse(body);
-        // console.log("body: ", data);
-        (async () => {
-            const favLeagues = await getFavLeagues();
-            const favTeams = await getFavTeams();
-            res.send({"data": data, "favLeagues": favLeagues, "favTeams": favTeams})
-        })();
-    })
+    //     res.send(data);
+    // })
+    res.send(allLeaguesJSON);
 })
+
+app.post("/addLeague", (req, res) => {
+    for (let i in req.body) {
+        let favLeague = new FavLeagues({
+            id: req.body[i].id,
+            name: req.body[i].name,
+            country: req.body[i].country,
+            flag: req.body[i].flag,
+            logo: req.body[i].logo
+        })
+        favLeague.save((err) => {
+            if (err) {
+                console.log("Failed to add new favourited league to database.");
+                return err;
+            }
+            console.log("Added new favourited league to database.", favLeague)
+        })
+    }
+    res.status(201).json(req.body);
+})
+
+// POST request to add new league to db called from Add League page
+app.post("/add_league", function(req, res) {
+    var leagueName = req.body.leaguename;
+    
+    if (leaguesArray.includes(leagueName)) {
+        League.create({league_name: leagueName}, function(err, league){
+            if(err){
+                console.log("ERROR!");
+            } else {
+                console.log("=======================");
+                console.log("Added League");
+                console.log("=======================");
+                console.log(league);
+            }
+        });
+    res.redirect("/fav_leagues");
+    } else {
+        console.log("Invalid/Unsupported League!");
+        res.redirect("/add_league");
+    }
+});
 
 // Renders the Favourite Leages page by retrieving the leagues located in db
 app.get("/fav_leagues", function(req, res) {

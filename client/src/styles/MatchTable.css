@@ -1,15 +1,13 @@
 .ui.fixed.table.tableWidth {
-    width: 45%;
-    min-width: 640px;
-    margin-bottom: 30px;
+    margin-top: 40px;
 }
 
-.ui.table {
+.ui.fixed.table {
     background-color: #2b2e33;
     color: white;
 }
 
-.ui.table thead th {
+.ui.fixed.table thead th {
     background-color: #3a3d42;
     color: white;
     height: 45px;
@@ -18,13 +16,13 @@
 .leagueFlag {
     width: 20px;
     height: 16px;
-    margin-right: 5px;
+    margin-right: 7px;
 }
 
 .leagueLogo {
     width: 20px;
     height: 16px;
-    margin-right: 5px;
+    margin-right: 7px;
 }
 
  .tableHeader {

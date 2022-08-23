@@ -1,0 +1,39 @@
+.tableDiv {
+    width: 100%;
+}
+
+.favLeagueRow {
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.ui.selectable.celled.table {
+    background-color: #2b2e33;
+    color: white;
+    width: 100%;
+}
+
+.ui.selectable.celled.table thead th {
+    background-color: #3a3d42;
+    color: white;
+}
+
+.ui.selectable.celled.table td {
+    display: flex;
+    align-items: center;
+}
+
+.addLeague {
+    color: white !important;
+    justify-content: center;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+a {
+    cursor: pointer;
+    padding: 10px;
+    user-select: none;
+}

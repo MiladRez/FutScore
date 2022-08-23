@@ -1,5 +1,6 @@
-.menu {
+.ui.green.inverted.menu {
     height: 75px;
+    position: sticky;
 }
 
 .futbol.icon.small {

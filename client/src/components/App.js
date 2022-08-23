@@ -17,15 +17,20 @@ const App = () => {
     }, []);
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Dashboard data={data} />}>
-                    <Route path="myTeams" />
-                    <Route path="myLeagues" element={<FavLeagues leagues={data.favLeagues} />} />
-                    <Route path="*" />
-                </Route>
-            </Routes>
-        </BrowserRouter>
+        <div>
+            { data ? 
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Dashboard data={data} />} />
+                        <Route path="myTeams" />
+                        <Route path="myLeagues" element={<FavLeagues leagues={data.favLeagues} />} />
+                        <Route path="*" />
+                    </Routes>
+                </BrowserRouter>
+                : null
+            } 
+        </div>
+
     )
 }
 

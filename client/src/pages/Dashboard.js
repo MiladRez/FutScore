@@ -31,25 +31,27 @@ const Dashboard = ({ data }) => {
     return (
         <div className="dashboardPage">
             <NavBar />
+            <div className="ui container center">
+                {favTeams && favTeams.length > 0 ?
+                    <MatchTable tableType={"favTeams"} matchesList={[matches, favTeamsMatches]} />
+                    : null
+                }
 
-            {favTeams && favTeams.length > 0 ?
-                <MatchTable tableType={"favTeams"} matchesList={[matches, favTeamsMatches]} />
-                : null
-            }
+                {favLeagues && favLeagues.length > 0 ?
+                    favLeagues.map(league => (
+                        <MatchTable key={league.id} tableType={"favLeagues"} matchesList={league} />
+                    ))
+                    : null
+                }
 
-            {favLeagues && favLeagues.length > 0 ?
-                favLeagues.map(league => (
-                    <MatchTable key={league.id} tableType={"favLeagues"} matchesList={league} />
-                ))
-                : null
-            }
-
-            {allOtherLeagues && allOtherLeagues.length > 0 ?
-                allOtherLeagues.map(league => (
-                    <MatchTable key={league.id} tableType={"allOtherLeagues"} matchesList={league} />
-                ))
-                : null
-            }
+                {allOtherLeagues && allOtherLeagues.length > 0 ?
+                    allOtherLeagues.map(league => (
+                        <MatchTable key={league.id} tableType={"allOtherLeagues"} matchesList={league} />
+                    ))
+                    : null
+                }
+            </div>
+            
         </div>
     )
 }
