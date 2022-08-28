@@ -2,7 +2,7 @@
     width: 100%;
 }
 
-.favLeagueRow {
+.favGroupRow {
     height: 50px;
     display: flex;
     align-items: center;
@@ -24,7 +24,7 @@
     align-items: center;
 }
 
-.addLeague {
+.addGroup {
     color: white !important;
     justify-content: center;
     height: 40px;
@@ -36,4 +36,9 @@ a {
     cursor: pointer;
     padding: 10px;
     user-select: none;
+}
+
+img.teamLogo {
+    width: 30px;
+    margin-right: 10px;
 }

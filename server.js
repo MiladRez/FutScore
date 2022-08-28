@@ -1,12 +1,14 @@
 const { reset } = require("nodemon");
 
 var request = require("request"),
+    axios = require("axios"),
     express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     cors = require("cors"),
 
     data = require("./todaysMatches.json"),
+    allTeamsJSON = require("./allTeams.json"),
     allLeaguesJSON = require("./allLeagues.json"),
 
     app = express();
@@ -58,7 +60,9 @@ var FavLeagues = mongoose.model("League", favLeaguesSchema);
 
 var favTeamsSchema = new mongoose.Schema({
     team_id: Number,
-    name: String
+    name: String,
+    country: String,
+    logo: String
 });
 var FavTeams = mongoose.model("Team", favTeamsSchema);
 ////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
@@ -180,52 +184,62 @@ const getCurrentDate = () => {
     return date;
 }
 
-app.get("/getFixtures", (req, res) => {
+app.get("/getFixtures", async (req, res) => {
 
-    const test = true;
+    const test = false;
 
     if (test) {
         const matchesLimit = 200;
 
-        (async () => {
-            const favTeams = await getFavTeams(data.data);
-            const favLeagues = await getFavLeagues(data.data);
-            const favTeamsMatches = await getFavTeamsMatches(favTeams);
-            const allOtherLeagues = await getAllOtherLeaguesMatches(data.data, favLeagues, matchesLimit);
-            res.send({"data": data.data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
-        })();
-
+        const favTeams = await getFavTeams(data.data);
+        const favLeagues = await getFavLeagues(data.data);
+        const favTeamsMatches = await getFavTeamsMatches(favTeams);
+        const allOtherLeagues = await getAllOtherLeaguesMatches(data.data, favLeagues, matchesLimit);
+        res.send({"data": data.data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
     } else {
         let date = getCurrentDate();
 
         const options = {
             method: 'GET',
             url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-            qs: {date: date, timezone: "America/Toronto"},
+            params: {date: date, timezone: "America/Toronto"},
             headers: {
                 'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
                 'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
                 useQueryString: true
             }
         };
+        
+        const result = await axios.request(options);
+        const data = result.data.response;
 
-        request(options, (err, requestResponse, body) => {
-            console.log("error: ", err);
-            console.log("statusCode: ", requestResponse && requestResponse.statusCode)
+        const matchesLimit = 200;
 
-            let data = JSON.parse(body).response;
-            // number of additional matches to display on initial render on Dashboard
-            const matchesLimit = 200;
-
-            (async () => {
-                const favTeams = await getFavTeams(data);
-                const favLeagues = await getFavLeagues(data);
-                const favTeamsMatches = await getFavTeamsMatches(favTeams);
-                const allOtherLeagues = await getAllOtherLeaguesMatches(data, favLeagues, matchesLimit);
-                res.send({"data": data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
-            })();
-        })        
+        const favTeams = await getFavTeams(data);
+        const favLeagues = await getFavLeagues(data);
+        const favTeamsMatches = await getFavTeamsMatches(favTeams);
+        const allOtherLeagues = await getAllOtherLeaguesMatches(data, favLeagues, matchesLimit);
+        res.send({ "data": data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues });
     }
+})
+
+// Would have to run this every new season to get the latest teams in each league
+app.get("/getAllTeams", async (req, res) => {
+    // const options = {
+    //     method: 'GET',
+    //     url: 'https://api-football-v1.p.rapidapi.com/v3/teams',
+    //     params: { league: 78, season: "2022" },
+    //     headers: {
+    //         'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
+    //         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+    //         useQueryString: true
+    //     }
+    // }
+
+    // let result = await axios.request(options);
+    // result = result.data.response;
+    // res.send(result);
+    res.send(allTeamsJSON);
 })
 
 app.get("/getAllLeagues", (req, res) => {
@@ -238,12 +252,30 @@ app.get("/getAllLeagues", (req, res) => {
     //         useQueryString: true
     //     }
     // }
-    // request(options, (err, requestResponse, body) => {
-    //     let data = JSON.parse(body).response;
-
-    //     res.send(data);
+    // axios.request(options).then(result => {
+    //     res.send(result.data.response)
     // })
+
     res.send(allLeaguesJSON);
+})
+
+app.post("/addTeam", (req, res) => {
+    for (let i in req.body) {
+        let favTeam = new FavTeams({
+            team_id: req.body[i].id,
+            name: req.body[i].name,
+            country: req.body[i].country,
+            logo: req.body[i].logo
+        })
+        favTeam.save((err) => {
+            if (err) {
+                console.log("Failed to add new favourited team to database.");
+                return err;
+            }
+            console.log("Added new favourited team to database.", favTeam)
+        })
+    }
+    res.status(201).json(req.body);
 })
 
 app.post("/addLeague", (req, res) => {

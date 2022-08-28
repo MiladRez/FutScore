@@ -1,14 +1,15 @@
-import "../styles/AddLeagueModal.css";
-import { Button, Dropdown, Modal } from "semantic-ui-react";
 import { useCallback, useEffect, useState } from "react";
+import AddGroupModal from "./AddGroupModal";
 
-const AddLeagueModal = ({ toggleModal, showModal, favLeaguesIds }) => {
+const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
     
     const [leagues, setLeagues] = useState([]);
-    const [leaguesToBeAdded, setLeaguesToBeAdded] = useState([])
+    const [leaguesToBeAdded, setLeaguesToBeAdded] = useState([]);
 
-    const getLeaguesToBeAdded = (event, {value}) => {
+    /* eslint-disable-next-line */
+    const getLeaguesToBeAdded = (undefined, {value}) => {
         setLeaguesToBeAdded(value)
+        // console.log(leaguesToBeAdded)
     }
 
     const formatAsDropdownItem = useCallback((leagues) => {
@@ -19,14 +20,15 @@ const AddLeagueModal = ({ toggleModal, showModal, favLeaguesIds }) => {
                     image: league.country.flag ? { src: league.country.flag } : null,
                     text: `${league.country.name} - ${league.league.name}`,
                     value: `${league.league.id}%${league.league.name}%${league.country.name}%${league.country.flag}%${league.league.logo}`,
+                    // code below works but prints error warnings in console
                     // value: {id: league.league.id, name: league.league.name, country: league.country.name, flag: league.country.flag, logo: league.league.logo},
                     className: "cell"
                 }
-                : []
+            : []
         ))
     }, [favLeaguesIds]);
 
-    const addNewFavouriteLeaguesToDB = () => {
+    const addNewLeaguesToDB = () => {
         const newLeaguesToAdd = leaguesToBeAdded.map(league => (
             {
                 id: league.split("%")[0],
@@ -43,6 +45,7 @@ const AddLeagueModal = ({ toggleModal, showModal, favLeaguesIds }) => {
             body: JSON.stringify(newLeaguesToAdd)
         };
         fetch("http://localhost:8080/addLeague", requestOptions);
+        // console.log(newLeaguesToAdd)
         setLeaguesToBeAdded([]);
         toggleModal();
     }
@@ -56,42 +59,8 @@ const AddLeagueModal = ({ toggleModal, showModal, favLeaguesIds }) => {
     }, [formatAsDropdownItem])
 
     return (
-        <div>
-            <Modal
-                onOpen={toggleModal}
-                onClose={toggleModal}
-                open={showModal}
-                dimmer="blurring"
-                size="small"
-            >
-                <Modal.Header>
-                    Select league to follow
-                </Modal.Header>
-                <Modal.Content>
-                    {leagues ?
-                        <Dropdown
-                            placeholder="League"
-                            fluid
-                            multiple
-                            search
-                            onChange={getLeaguesToBeAdded}
-                            loading={leagues ? false : true}
-                            disabled={leagues ? false : true}
-                            selection
-                            options={leagues}
-                        >
-                        </Dropdown>
-                        : null
-                    }
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button positive onClick={addNewFavouriteLeaguesToDB}>Add</Button>
-                    <Button negative onClick={() => toggleModal()}>Cancel</Button>
-                </Modal.Actions>
-            </Modal> 
-        </div>
-        
+        <AddGroupModal dropdownOptions={leagues} toggleModal={toggleModal} showModal={showModal} groupsToBeAdded={getLeaguesToBeAdded} addGroupsToDB={addNewLeaguesToDB} />
     )
 }
 
-export default AddLeagueModal;
+export default FollowNewLeague;

@@ -10,6 +10,7 @@
   "proxy": "http://localhost:8080",
   "dependencies": {
     "async": "^0.2.10",
+    "axios": "^0.27.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "ejs": "^2.7.4",
