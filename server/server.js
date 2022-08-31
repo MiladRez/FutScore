@@ -5,11 +5,15 @@ var request = require("request"),
     express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
+    FavTeams = require("./schemaModels/favTeamsModel"),
+    FavLeagues = require("./schemaModels/favLeaguesModel"),
     cors = require("cors"),
 
-    data = require("./todaysMatches.json"),
-    allTeamsJSON = require("./allTeams.json"),
-    allLeaguesJSON = require("./allLeagues.json"),
+    { getFavTeams, getFavLeagues, getFavTeamsMatches, getAllOtherLeaguesMatches, getCurrentDate } = require("./utils/consolidateDataHelperFuncs.js"),
+
+    data = require("./jsonFiles/todaysMatches.json"),
+    allTeamsJSON = require("./jsonFiles/allTeams.json"),
+    allLeaguesJSON = require("./jsonFiles/allLeagues.json"),
 
     app = express();
     
@@ -21,172 +25,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(cors())
 
-////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
+const url = "https://api-football-v1.p.rapidapi.com/v3";
+const X_RapidAPI_Key = "5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07";
+const X_RapidAPI_Host = "api-football-v1.p.rapidapi.com";
 
-//Arrays of top leagues and teams used as dropdown suggestions
-var leaguesArray = ["UEFA Champions League", "FIFA World Cup", "Primera Division", "Serie A", "Ligue 1", "Bundesliga", "Primeira Liga", "Eredivisie",
-                    "Série A", "Premier League", "Championship", "European Championship"];
-                    
-var teamsArray = ["Real Madrid", "Barcelona", "Celta Vigo", "Athletic Bilbao", "Atletico Madrid", "Real Betis", "Levante", "Sevilla", "Espanyol",
-                  "Getafe CF", "Real Sociedad", "Villareal", "Eibar", "Alaves", "Girona", "Huesca", "Valencia", "Rayo Vallecano", "Valladolid",
-                  "Leganes", "Arsenal FC", "Manchester United", "Flamengo", "Vancouver Whitecaps", "Juventus", "Los Angeles FC", "San Jose Earthquakes"];
-  
-// 2000 = FIFA World Cup
-// 2001 = UEFA Champions League               
-// 2002 = Bundesliga
-// 2003 = Eredivisie (Dutch League)
-// 2013 = Série A (Brazilian League)
-// 2014 = Primera Division (La Liga)
-// 2015 = Ligue 1
-// 2016 = Championship
-// 2017 = Primeira Liga (Portugese League)
-// 2018 = European Championship
-// 2019 = Serie A
-// 2021 = Premier League
-
-var league_id = {"Bundesliga": 2002, "Eredivisie": 2003, "Brazilian League": 2013, "LaLiga Santander": 2014, "Ligue 1": 2015, "Championship": 2016,
-                 "Primeira Liga": 2017, "Serie A": 2019, "Premier League": 2021};
-////////////////////////////////////////////////////LEAGUE AND TEAM LIST////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
-var favLeaguesSchema = new mongoose.Schema({
-    id: Number,
-    name: String,
-    country: String,
-    flag: String,
-    logo: String
-});
-var FavLeagues = mongoose.model("League", favLeaguesSchema);
-
-var favTeamsSchema = new mongoose.Schema({
-    team_id: Number,
-    name: String,
-    country: String,
-    logo: String
-});
-var FavTeams = mongoose.model("Team", favTeamsSchema);
-////////////////////////////////////////////////////SCHEMA////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////ROUTES////////////////////////////////////////////////////////////////////
-
-const getFavTeams = async (matches) => {
-    let teams = await FavTeams.find({}, (err) => {
-        if (err) {
-            console.log("ERROR: Failed to fetch favourite teams from database.")
-            return
-        }
-    })
-    // converts all mongoose objects to javascript objects
-    teams = teams.map(team => (team.toObject()))
-
-    // Adds matches for each league in a new field (matches) inside favLeagues
-    teams.map(team => (
-        team.match = getTeamMatch(team, matches)
-    ))
-
-    return teams;
-}
-
-const getTeamMatch = (team, matches) => {
-    for (let match of matches) {
-        if (match.teams.home.id === team.team_id || match.teams.away.id === team.team_id) {
-            return match;
-        }  
-    }
-    return null;
-}
-
-// Adds match for each team if they play that day in a new field (match) inside favTeams
-const getFavTeamsMatches = (favTeams) => {
-    return Array.from(
-        new Set(
-            favTeams.flatMap(team => (
-                team.match ? team.match : []
-            ))
-        )
-    )
-}
-
-const getFavLeagues = async (matches) => {
-    let leagues = await FavLeagues.find({}, (err) => {
-        // return !err ? leagues : console.log("ERROR: Failed to fetch favourite leagues from database.")
-        if (err) {
-            console.log("ERROR: Failed to fetch favourite leagues from database.")
-            return
-        }
-    })
-    // converts all mongoose objects to javascript objects
-    leagues = leagues.map(league => (league.toObject()))
-
-    // Adds matches for each league in a new field (matches) inside favLeagues
-    leagues.map(league => (
-        league.matches = getLeagueMatches(league, matches)
-    ))
-    return leagues;
-}
-
-const getLeagueMatches = (league, matches) => {
-    return matches.flatMap(match => (
-        (match.league.id === league.id) ? match : []
-    ))
-}
-
-const getAllOtherLeaguesMatches = (matches, favLeagues, limit) => {
-    const map = new Map();
-    const favLeaguesIds = favLeagues.map(league => league.id);
-    let numOfMatches = 0;
-
-    for (let match of matches) {
-        if (numOfMatches >= limit) {
-            break;
-        }
-        if (!favLeaguesIds.includes(match.league.id)) {
-            if (map.has(match.league.id)) {
-                map.set(
-                    match.league.id, {
-                    ...map.get(match.league.id),
-                    matches: [...map.get(match.league.id).matches, match]
-                }
-                );
-            } else {
-                map.set(
-                    match.league.id, {
-                        id: match.league.id,
-                        name: match.league.name,
-                        country: match.league.country,
-                        flag: match.league.flag,
-                        logo: match.league.logo,
-                        matches: [match]
-                    }
-                );
-            }
-            numOfMatches++;
-        }
-    }
-    console.log("length: ", [...map.values()].length)
-    console.log("numOfMatches: ", numOfMatches)
-    return [...map.values()];
-}
-
-const getCurrentDate = () => {
-    // current date
-    let date_ob = new Date();
-    // adjust 0 before single digit date
-    let day = ("0" + date_ob.getDate()).slice(-2);
-    // current month
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    // current year
-    let year = date_ob.getFullYear();
-
-    // date in YYYY-MM-DD format
-    let date = year + "-" + month + "-" + day;
-
-    return date;
-}
-
+// returns list of current fixtures from api-football
 app.get("/getFixtures", async (req, res) => {
 
-    const test = false;
+    const test = true;
 
     if (test) {
         const matchesLimit = 200;
@@ -201,11 +47,11 @@ app.get("/getFixtures", async (req, res) => {
 
         const options = {
             method: 'GET',
-            url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
+            url: `${url}/fixtures`,
             params: {date: date, timezone: "America/Toronto"},
             headers: {
-                'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
-                'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+                'X-RapidAPI-Key': X_RapidAPI_Key,
+                'X-RapidAPI-Host': X_RapidAPI_Host,
                 useQueryString: true
             }
         };
@@ -224,39 +70,53 @@ app.get("/getFixtures", async (req, res) => {
 })
 
 // Would have to run this every new season to get the latest teams in each league
+// Currently, there is no API support for retreiving all available teams in every league
+// This function makes a call to a specific league and season to retrieve the latest teams  
 app.get("/getAllTeams", async (req, res) => {
-    // const options = {
-    //     method: 'GET',
-    //     url: 'https://api-football-v1.p.rapidapi.com/v3/teams',
-    //     params: { league: 78, season: "2022" },
-    //     headers: {
-    //         'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
-    //         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
-    //         useQueryString: true
-    //     }
-    // }
+    const retrieveTeamsFromSpecificLeague = false;
+    const leagueID = 253;
+    const season = 2022;
 
-    // let result = await axios.request(options);
-    // result = result.data.response;
-    // res.send(result);
-    res.send(allTeamsJSON);
+    if (retrieveTeamsFromSpecificLeague) {
+        const options = {
+            method: 'GET',
+            url: `${url}/teams`,
+            params: { league: leagueID, season: season },
+            headers: {
+                'X-RapidAPI-Key': X_RapidAPI_Key,
+                'X-RapidAPI-Host': X_RapidAPI_Host,
+                useQueryString: true
+            }
+        }
+        let result = await axios.request(options);
+        result = result.data.response;
+        res.send(result);
+    } else {
+        res.send(allTeamsJSON);
+    }
 })
 
+// returns list of all leagues from api-football
 app.get("/getAllLeagues", (req, res) => {
-    // const options = {
-    //     method: 'GET',
-    //     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
-    //     headers: {
-    //         'X-RapidAPI-Key': '5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07',
-    //         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
-    //         useQueryString: true
-    //     }
-    // }
-    // axios.request(options).then(result => {
-    //     res.send(result.data.response)
-    // })
 
-    res.send(allLeaguesJSON);
+    const test = true;
+
+    if (test) {
+        res.send(allLeaguesJSON);
+    } else {
+        const options = {
+            method: 'GET',
+            url: `${url}/leagues`,
+            headers: {
+                'X-RapidAPI-Key': X_RapidAPI_Key,
+                'X-RapidAPI-Host': X_RapidAPI_Host,
+                useQueryString: true
+            }
+        }
+        axios.request(options).then(result => {
+            res.send(result.data.response)
+        })
+    }
 })
 
 app.post("/addTeam", (req, res) => {
@@ -297,6 +157,8 @@ app.post("/addLeague", (req, res) => {
     }
     res.status(201).json(req.body);
 })
+
+
 
 // POST request to add new league to db called from Add League page
 app.post("/add_league", function(req, res) {

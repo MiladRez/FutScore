@@ -55,7 +55,7 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
     }, [formatAsDropdownItem])
 
     return (
-        <AddGroupModal dropdownOptions={teams} toggleModal={toggleModal} showModal={showModal} groupsToBeAdded={getTeamsToBeAdded} addGroupsToDB={addNewTeamsToDB} />
+        <AddGroupModal dropdownOptions={teams} toggleModal={toggleModal} showModal={showModal} groupsToBeAdded={getTeamsToBeAdded} addGroupsToDB={addNewTeamsToDB} modalType={"teams"} />
     )
 
 }

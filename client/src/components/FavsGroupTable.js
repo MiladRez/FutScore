@@ -1,14 +1,33 @@
+import { useState } from "react";
+import { Icon, Transition } from "semantic-ui-react";
 import "../styles/FavsGroupTable.css";
 
 const FavsGroupTable = ({ favsGroup, tableType, toggleModal }) => {
 
-    const favRow = (favGroup) => {
+    const [removeButtonVisible, setRemoveButtonVisible] = useState(-1);
+
+    const showX = (index) => {
+        setRemoveButtonVisible(index)
+    }
+
+    const hideX = () => {
+        setRemoveButtonVisible(-1)
+    }
+
+    const favRow = (favGroup, index) => {
         if (tableType === "favTeams") {
             return (
-                <td>
-                    <img className="teamLogo" alt="" src={favGroup.logo} />
-                    {favGroup.name}
-                </td>
+                <>
+                    <td>
+                        <img className="teamLogo" alt="" src={favGroup.logo} />
+                        {favGroup.name}
+                    </td>
+                    <td>
+                        <Transition visible={removeButtonVisible === index} animation="scale" duration={{ hide: 100, show: 600 }}>
+                            <Icon name="x" className="removeGroup" />
+                        </Transition>
+                    </td>
+                </>
             )
         } else if (tableType === "favLeagues") {
             return (
@@ -31,9 +50,9 @@ const FavsGroupTable = ({ favsGroup, tableType, toggleModal }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {favsGroup.map(favGroup => (
-                        <tr className="favGroupRow" key={tableType === "favTeams" ? favGroup.team_id : favGroup.id}>
-                            {favRow(favGroup)}
+                    {favsGroup.map((favGroup, index) => (
+                        <tr className="favGroupRow" key={tableType === "favTeams" ? favGroup.team_id : favGroup.id} onMouseEnter={() => showX(index)} onMouseLeave={hideX}>
+                            {favRow(favGroup, index)}
                         </tr>
                     ))}
                     <tr className="addGroup">

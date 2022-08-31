@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import AddGroupModal from "./AddGroupModal";
+import worldLogo from "../images/world-47.png";
 
 const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
     
@@ -17,7 +18,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
             !favLeaguesIds.includes(league.league.id) ?
                 {
                     key: league.league.id,
-                    image: league.country.flag ? { src: league.country.flag } : null,
+                    image: league.country.flag ? { src: league.country.flag } : { className: "world", src:  worldLogo},
                     text: `${league.country.name} - ${league.league.name}`,
                     value: `${league.league.id}%${league.league.name}%${league.country.name}%${league.country.flag}%${league.league.logo}`,
                     // code below works but prints error warnings in console
@@ -59,7 +60,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
     }, [formatAsDropdownItem])
 
     return (
-        <AddGroupModal dropdownOptions={leagues} toggleModal={toggleModal} showModal={showModal} groupsToBeAdded={getLeaguesToBeAdded} addGroupsToDB={addNewLeaguesToDB} />
+        <AddGroupModal dropdownOptions={leagues} toggleModal={toggleModal} showModal={showModal} groupsToBeAdded={getLeaguesToBeAdded} addGroupsToDB={addNewLeaguesToDB} modalType={"leagues"} />
     )
 }
 

@@ -1,6 +1,7 @@
 import { Button, Dropdown, Modal } from "semantic-ui-react";
+import "../styles/AddGroupModal.css";
 
-const AddGroupModal = ({ dropdownOptions, toggleModal, showModal, groupsToBeAdded, addGroupsToDB }) => {
+const AddGroupModal = ({ dropdownOptions, toggleModal, showModal, groupsToBeAdded, addGroupsToDB, modalType }) => {
 
     return (
         <div>
@@ -12,12 +13,12 @@ const AddGroupModal = ({ dropdownOptions, toggleModal, showModal, groupsToBeAdde
                 size="small"
             >
                 <Modal.Header>
-                    Select league to follow
+                    {modalType === "teams" ? "Select team to follow" : "Select league to follow"}
                 </Modal.Header>
                 <Modal.Content>
                     {dropdownOptions ?
                         <Dropdown
-                            placeholder="League"
+                            placeholder={modalType === "teams" ? "Team" : "League"}
                             fluid
                             multiple
                             search
