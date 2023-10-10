@@ -6,6 +6,13 @@
     display: grid;
     grid-template-columns: 1fr 40px;
     align-items: center;
+	font-size: medium;
+}
+
+img.leagueFlag {
+	height: 30px;
+	width: 30px;
+	margin-right: 15px;
 }
 
 .ui.selectable.celled.table tbody tr:hover {
@@ -55,14 +62,6 @@ i.icon.removeGroup {
     justify-content: center;
     cursor: pointer;
 }
-
-/* i.icon.removeGroup:hover {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform .7s ease-in-out;
-    transform: rotate(360deg);
-} */
 
 .ui.selectable.table tbody tr:hover i.icon.removeGroup, .ui.table tbody tr td.selectable:hover i.icon.removeGroup {
     color: red;

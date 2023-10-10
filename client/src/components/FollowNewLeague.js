@@ -7,10 +7,8 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
     const [leagues, setLeagues] = useState([]);
     const [leaguesToBeAdded, setLeaguesToBeAdded] = useState([]);
 
-    /* eslint-disable-next-line */
-    const getLeaguesToBeAdded = (undefined, {value}) => {
+    const getLeaguesToBeAdded = (_, {value}) => {
         setLeaguesToBeAdded(value)
-        // console.log(leaguesToBeAdded)
     }
 
     const formatAsDropdownItem = useCallback((leagues) => {
@@ -35,7 +33,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
                 id: league.split("%")[0],
                 name: league.split("%")[1],
                 country: league.split("%")[2],
-                flag: league.split("%")[3],
+                flag: league.split("%")[3] != "null" ? league.split("%")[3] : worldLogo,
                 logo: league.split("%")[4]
             }
         ))
