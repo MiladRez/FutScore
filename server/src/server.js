@@ -6,18 +6,18 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const serverless = require("serverless-http");
 
-const FavTeams = require("../../schemaModels/favTeamsModel");
-const FavLeagues = require("../../schemaModels/favLeaguesModel");
+const FavTeams = require("../schemaModels/favTeamsModel");
+const FavLeagues = require("../schemaModels/favLeaguesModel");
 const {
 	getFavTeams,
 	getFavLeagues,
 	getFavTeamsMatches,
 	getAllOtherLeaguesMatches,
 	getCurrentDate
-} = require("../../utils/consolidateDataHelperFuncs.js");
-const todaysMatches = require("../../jsonFiles/todaysMatches.json");
-const allTeamsJSON = require("../../jsonFiles/allTeams.json");
-const allLeaguesJSON = require("../../jsonFiles/allLeagues.json");
+} = require("../utils/consolidateDataHelperFuncs.js");
+const todaysMatches = require("../jsonFiles/todaysMatches.json");
+const allTeamsJSON = require("../jsonFiles/allTeams.json");
+const allLeaguesJSON = require("../jsonFiles/allLeagues.json");
     
 mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
 
@@ -323,11 +323,12 @@ router.get("/removeLeague/:league_id", (req, res) => {
 // 	})
 // })
 
-app.use("/", router);
+app.use("/.netlify/functions/server", router);
 
 // Port is currently pointing to 3000 for local testing
 app.listen(8080, process.env.IP, function () {
     console.log("The FutScore server has started!");
 });
 
+module.exports = app;
 module.exports.handler = serverless(app)
