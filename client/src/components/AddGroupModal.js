@@ -17,7 +17,7 @@ const AddGroupModal = ({ dropdownOptions, toggleModal, showModal, groupsToBeAdde
                 </Modal.Header>
                 <Modal.Content>
                     {dropdownOptions ?
-                        <Dropdown
+						<Dropdown
                             placeholder={modalType === "teams" ? "Team" : "League"}
                             fluid
                             multiple
@@ -33,8 +33,8 @@ const AddGroupModal = ({ dropdownOptions, toggleModal, showModal, groupsToBeAdde
                     }
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button positive onClick={() => addGroupsToDB()}>Add</Button>
-                    <Button negative onClick={() => toggleModal()}>Cancel</Button>
+                    <Button positive onClick={addGroupsToDB}>Add</Button>
+                    <Button negative onClick={toggleModal}>Cancel</Button>
                 </Modal.Actions>
             </Modal> 
         </div>

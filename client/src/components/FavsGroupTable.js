@@ -12,7 +12,19 @@ const FavsGroupTable = ({ favsGroup, tableType, toggleModal }) => {
 
     const hideX = () => {
         setRemoveButtonVisible(-1)
-    }
+	}
+	
+	const removeTeamFromDB = (selectedTeam) => {
+        const team_id = selectedTeam.team_id
+        fetch("http://localhost:8080/removeTeam/" + team_id);
+		window.location.reload(false);
+	}
+	
+	const removeLeagueFromDB = (selectedLeague) => {
+		const league_id = selectedLeague.id
+		fetch("http://localhost:8080/removeLeague/" + league_id);
+		window.location.reload(false);
+	}
 
     const favRow = (favGroup, index) => {
         if (tableType === "favTeams") {
@@ -24,17 +36,24 @@ const FavsGroupTable = ({ favsGroup, tableType, toggleModal }) => {
                     </td>
                     <td>
                         <Transition visible={removeButtonVisible === index} animation="scale" duration={{ hide: 100, show: 600 }}>
-                            <Icon name="x" className="removeGroup" />
+                            <Icon name="x" className="removeGroup" onClick={() => removeTeamFromDB(favGroup)} />
                         </Transition>
                     </td>
                 </>
             )
         } else if (tableType === "favLeagues") {
-            return (
-                <td>
-                    <img className="leagueFlag" alt="" src={favGroup.flag} />
-                    {favGroup.country} - {favGroup.name}
-                </td>
+			return (
+				<>
+					<td>
+						<img className="leagueFlag" alt="" src={favGroup.flag} />
+						{favGroup.country} - {favGroup.name}
+					</td>
+					<td>
+						<Transition visible={removeButtonVisible === index} animation="scale" duration={{ hide: 100, show: 600 }}>
+							<Icon name="x" className="removeGroup" onClick={() => removeLeagueFromDB(favGroup)} />
+						</Transition>
+					</td>
+				</>
             )
         } else {
             return null;

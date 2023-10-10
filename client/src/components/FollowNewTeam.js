@@ -43,7 +43,8 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
         };
         fetch("http://localhost:8080/addTeam", requestOptions);
         setTeamsToBeAdded([]);
-        toggleModal();
+		toggleModal();
+		window.location.reload(false);
     }
 
     useEffect(() => {

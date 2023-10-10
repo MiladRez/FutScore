@@ -6,11 +6,11 @@ import { Icon } from "semantic-ui-react";
 
 const FavTeams = ({teams}) => {
 
-    const [showModal, setShowModal] = useState(false);
+	const [showModal, setShowModal] = useState(false);
 
     const toggleModal = () => {
         setShowModal(!showModal);
-    }
+	}
 
     return (
         <>

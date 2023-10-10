@@ -1,22 +1,28 @@
 div.visible.menu.transition div.item.cell {
     display: grid;
-    grid-template-columns: 35px 1fr;
+    grid-template-columns: 45px 1fr;
     align-items: center;
 }
 
-.ui.dropdown .menu>.item>img.ui.image {
-    height: 16px;
-    width: 21px;
+/* .ui.dropdown .menu>.item>img.ui.image {
     border: 1px solid black;
-}
+} */
 
 .ui.dropdown .menu>.item>img.ui.image.world {
-    height: 16px;
-    width: auto;
     padding: 1px 3.5px 1px 3.5px
+}
+
+.ui.fluid.multiple.dropdown {
+	padding-right: 0.1em;
 }
 
 .ui.multiple.dropdown>.ui.label {
     display: flex;
     align-items: center;
+	justify-content: space-between;
+}
+
+.ui.fluid.selection.dropdown>.dropdown.icon {
+	position: relative;
+	top: 0.5em;
 }

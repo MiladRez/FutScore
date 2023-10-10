@@ -48,7 +48,8 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
         fetch("http://localhost:8080/addLeague", requestOptions);
         // console.log(newLeaguesToAdd)
         setLeaguesToBeAdded([]);
-        toggleModal();
+		toggleModal();
+		window.location.reload(false);
     }
 
     useEffect(() => {

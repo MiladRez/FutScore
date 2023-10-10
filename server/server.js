@@ -1,21 +1,24 @@
-const { reset } = require("nodemon");
-
 var request = require("request"),
-    axios = require("axios"),
-    express = require("express"),
-    bodyParser = require("body-parser"),
-    mongoose = require("mongoose"),
-    FavTeams = require("./schemaModels/favTeamsModel"),
-    FavLeagues = require("./schemaModels/favLeaguesModel"),
-    cors = require("cors"),
+	axios = require("axios"),
+	express = require("express"),
+	app = express(),
+	bodyParser = require("body-parser"),
+	mongoose = require("mongoose"),
+	FavTeams = require("./schemaModels/favTeamsModel"),
+	FavLeagues = require("./schemaModels/favLeaguesModel"),
+	cors = require("cors"),
 
-    { getFavTeams, getFavLeagues, getFavTeamsMatches, getAllOtherLeaguesMatches, getCurrentDate } = require("./utils/consolidateDataHelperFuncs.js"),
+	{
+		getFavTeams,
+		getFavLeagues,
+		getFavTeamsMatches,
+		getAllOtherLeaguesMatches,
+		getCurrentDate
+	} = require("./utils/consolidateDataHelperFuncs.js"),
 
-    data = require("./jsonFiles/todaysMatches.json"),
-    allTeamsJSON = require("./jsonFiles/allTeams.json"),
-    allLeaguesJSON = require("./jsonFiles/allLeagues.json"),
-
-    app = express();
+	todaysMatches = require("./jsonFiles/todaysMatches.json"),
+	allTeamsJSON = require("./jsonFiles/allTeams.json"),
+	allLeaguesJSON = require("./jsonFiles/allLeagues.json");
     
 mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
     
@@ -32,16 +35,11 @@ const X_RapidAPI_Host = "api-football-v1.p.rapidapi.com";
 // returns list of current fixtures from api-football
 app.get("/getFixtures", async (req, res) => {
 
-    const test = true;
+	const test = true;
+	let data;
 
-    if (test) {
-        const matchesLimit = 200;
-
-        const favTeams = await getFavTeams(data.data);
-        const favLeagues = await getFavLeagues(data.data);
-        const favTeamsMatches = await getFavTeamsMatches(favTeams);
-        const allOtherLeagues = await getAllOtherLeaguesMatches(data.data, favLeagues, matchesLimit);
-        res.send({"data": data.data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues})
+	if (!test) {
+		data = todaysMatches.data
     } else {
         let date = getCurrentDate();
 
@@ -57,16 +55,16 @@ app.get("/getFixtures", async (req, res) => {
         };
         
         const result = await axios.request(options);
-        const data = result.data.response;
+        data = result.data.response;
+	}
 
-        const matchesLimit = 200;
+	const matchesLimit = 200;
 
-        const favTeams = await getFavTeams(data);
-        const favLeagues = await getFavLeagues(data);
-        const favTeamsMatches = await getFavTeamsMatches(favTeams);
-        const allOtherLeagues = await getAllOtherLeaguesMatches(data, favLeagues, matchesLimit);
-        res.send({ "data": data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues });
-    }
+	const favTeams = await getFavTeams(data);
+	const favLeagues = await getFavLeagues(data);
+	const favTeamsMatches = await getFavTeamsMatches(favTeams);
+	const allOtherLeagues = await getAllOtherLeaguesMatches(data, favLeagues, matchesLimit);
+	res.send({ "data": data, "favTeams": favTeams, "favLeagues": favLeagues, "favTeamsMatches": favTeamsMatches, "allOtherLeagues": allOtherLeagues });
 })
 
 // Would have to run this every new season to get the latest teams in each league
@@ -75,7 +73,7 @@ app.get("/getFixtures", async (req, res) => {
 app.get("/getAllTeams", async (req, res) => {
     const retrieveTeamsFromSpecificLeague = false;
     const leagueID = 253;
-    const season = 2022;
+    const season = 2023;
 
     if (retrieveTeamsFromSpecificLeague) {
         const options = {
@@ -138,6 +136,28 @@ app.post("/addTeam", (req, res) => {
     res.status(201).json(req.body);
 })
 
+app.get("/removeTeam/:team_id", (req, res) => {
+	var team_id = req.params.team_id;
+	FavTeams.deleteOne({team_id: team_id}, (err) => {
+		if (err) {
+			console.log("Failed to remove team from database.")
+			return err
+		}
+		console.log("Removed team from favourites.", team_id)
+	})
+})
+
+app.get("/removeLeague/:league_id", (req, res) => {
+	var league_id = req.params.league_id;
+	FavLeagues.deleteOne({id: league_id}, (err) => {
+		if (err) {
+			console.log("Failed to remove league from database.")
+			return err
+		}
+		console.log("Removed league from favourites.", league_id)
+	})
+})
+
 app.post("/addLeague", (req, res) => {
     for (let i in req.body) {
         let favLeague = new FavLeagues({
@@ -158,130 +178,30 @@ app.post("/addLeague", (req, res) => {
     res.status(201).json(req.body);
 })
 
-
-
-// POST request to add new league to db called from Add League page
-app.post("/add_league", function(req, res) {
-    var leagueName = req.body.leaguename;
-    
-    if (leaguesArray.includes(leagueName)) {
-        League.create({league_name: leagueName}, function(err, league){
-            if(err){
-                console.log("ERROR!");
-            } else {
-                console.log("=======================");
-                console.log("Added League");
-                console.log("=======================");
-                console.log(league);
-            }
-        });
-    res.redirect("/fav_leagues");
-    } else {
-        console.log("Invalid/Unsupported League!");
-        res.redirect("/add_league");
-    }
-});
-
-// Renders the Favourite Leages page by retrieving the leagues located in db
-app.get("/fav_leagues", function(req, res) {
-    League.find({}, function(error, leagues) {
-        if (error) {
-            console.log("ERROR!");
-        } else {
-            res.render("fav_leagues", {leagues: leagues});
-        }   
-    });
-});
-
-// Renders the Favourite Teams page by retrieving the teams located in the db
-app.get("/fav_teams", function(req, res) {
-    Team.find({}, function(error, teams) {
-        if (error) {
-            console.log("ERROR!");
-        } else {
-            res.render("fav_teams", {teams: teams});
-        }   
-    });
-});
-
 // Renders the league standings page corresponding to the league chosen
-app.get("/standings/leagues/:league_name", function(req, res) {
-    var leagueName = req.params.league_name;
-    var leagueID = league_id[leagueName];
+// app.get("/standings/leagues/:league_name", function(req, res) {
+//     var leagueName = req.params.league_name;
+//     var leagueID = league_id[leagueName];
     
-    // football-data.org API with modified url that points to league standings objects with the corresponding leagueID
-    var options = {
-        url: 'https://api.football-data.org/v2/competitions/' + leagueID + '/standings',
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Accept-Charset': 'utf-8',
-            "X-Auth-Token": "788a449190624519aac963d1092782bb"
-        }
-    }
-    request(options, function(error, response, body){
-        if (!error && response.statusCode == 200) {
-            var parsedData = JSON.parse(body);
-            res.render("standings", {body: parsedData, league_name: leagueName});
-        } else {
-            console.log("ERROR");
-        }
-    });
-});
-
-// POST request to add new league to db called from Add League page
-app.post("/add_league", function(req, res) {
-    var leagueName = req.body.leaguename;
-    
-    if (leaguesArray.includes(leagueName)) {
-        League.create({league_name: leagueName}, function(err, league){
-            if(err){
-                console.log("ERROR!");
-            } else {
-                console.log("=======================");
-                console.log("Added League");
-                console.log("=======================");
-                console.log(league);
-            }
-        });
-    res.redirect("/fav_leagues");
-    } else {
-        console.log("Invalid/Unsupported League!");
-        res.redirect("/add_league");
-    }
-});
-
-// Renders the Add League page
-app.get("/add_league", function(req, res) {
-    res.render("add_league", {leagues: leaguesArray});
-});
-
-// POST request to add new team to db called from Add Team page
-app.post("/add_team", function(req, res) {
-    var teamName = req.body.teamname;
-    
-    if (teamsArray.includes(teamName)) {
-        Team.create({team_name: teamName}, function(err, team){
-            if(err){
-                console.log("ERROR!");
-            } else {
-                console.log("=======================");
-                console.log("Added Team");
-                console.log("=======================");
-                console.log(team);
-            }
-        });
-    res.redirect("/fav_teams");
-    } else {
-        console.log("Invalid/Unsupported Team!");
-        res.redirect("/add_team");
-    }
-});
-
-// Renders the Add Team page
-app.get("/add_team", function(req, res) {
-    res.render("add_team", {team: teamsArray});
-});
+//     // football-data.org API with modified url that points to league standings objects with the corresponding leagueID
+//     var options = {
+//         url: 'https://api.football-data.org/v2/competitions/' + leagueID + '/standings',
+//         method: 'GET',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Accept-Charset': 'utf-8',
+//             "X-Auth-Token": "788a449190624519aac963d1092782bb"
+//         }
+//     }
+//     request(options, function(error, response, body){
+//         if (!error && response.statusCode == 200) {
+//             var parsedData = JSON.parse(body);
+//             res.render("standings", {body: parsedData, league_name: leagueName});
+//         } else {
+//             console.log("ERROR");
+//         }
+//     });
+// });
 
 // Removes the selected league and redirects to Favourite Leagues page
 app.get("/remove/leagues/:league_name", function(req, res){
