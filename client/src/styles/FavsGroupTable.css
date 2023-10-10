@@ -8,6 +8,10 @@
     align-items: center;
 }
 
+.ui.selectable.celled.table tbody tr:hover {
+	color: #00b85f !important;
+}
+
 .ui.selectable.celled.table {
     background-color: #2b2e33;
     color: white;

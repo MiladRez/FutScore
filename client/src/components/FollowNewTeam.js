@@ -17,7 +17,7 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
             !favTeamsIds.includes(team.team.id) ?
                 {
                     key: team.team.id,
-                    image: team.team.logo ? { src: team.team.logo } : null,
+                    image: team.team.logo ? { src: team.team.logo, className: "teamLogo" } : null,
                     text: team.team.name,
                     value: `${team.team.id}%${team.team.name}%${team.team.country}%${team.team.logo}`,
                     className: "cell"

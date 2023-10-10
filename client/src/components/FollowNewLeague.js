@@ -18,7 +18,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
             !favLeaguesIds.includes(league.league.id) ?
                 {
                     key: league.league.id,
-                    image: league.country.flag ? { src: league.country.flag } : { className: "world", src:  worldLogo},
+                    image: league.country.flag ? { src: league.country.flag, className: "country" } : { className: "world", src:  worldLogo},
                     text: `${league.country.name} - ${league.league.name}`,
                     value: `${league.league.id}%${league.league.name}%${league.country.name}%${league.country.flag}%${league.league.logo}`,
                     // code below works but prints error warnings in console

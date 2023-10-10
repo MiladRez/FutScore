@@ -4,9 +4,10 @@ div.visible.menu.transition div.item.cell {
     align-items: center;
 }
 
-/* .ui.dropdown .menu>.item>img.ui.image {
+.ui.dropdown .menu>.item>img.ui.image.country {
+	height: 25px;
     border: 1px solid black;
-} */
+}
 
 .ui.dropdown .menu>.item>img.ui.image.world {
     padding: 1px 3.5px 1px 3.5px

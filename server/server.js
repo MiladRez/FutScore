@@ -147,17 +147,6 @@ app.get("/removeTeam/:team_id", (req, res) => {
 	})
 })
 
-app.get("/removeLeague/:league_id", (req, res) => {
-	var league_id = req.params.league_id;
-	FavLeagues.deleteOne({id: league_id}, (err) => {
-		if (err) {
-			console.log("Failed to remove league from database.")
-			return err
-		}
-		console.log("Removed league from favourites.", league_id)
-	})
-})
-
 app.post("/addLeague", (req, res) => {
     for (let i in req.body) {
         let favLeague = new FavLeagues({
@@ -178,62 +167,16 @@ app.post("/addLeague", (req, res) => {
     res.status(201).json(req.body);
 })
 
-// Renders the league standings page corresponding to the league chosen
-// app.get("/standings/leagues/:league_name", function(req, res) {
-//     var leagueName = req.params.league_name;
-//     var leagueID = league_id[leagueName];
-    
-//     // football-data.org API with modified url that points to league standings objects with the corresponding leagueID
-//     var options = {
-//         url: 'https://api.football-data.org/v2/competitions/' + leagueID + '/standings',
-//         method: 'GET',
-//         headers: {
-//             'Accept': 'application/json',
-//             'Accept-Charset': 'utf-8',
-//             "X-Auth-Token": "788a449190624519aac963d1092782bb"
-//         }
-//     }
-//     request(options, function(error, response, body){
-//         if (!error && response.statusCode == 200) {
-//             var parsedData = JSON.parse(body);
-//             res.render("standings", {body: parsedData, league_name: leagueName});
-//         } else {
-//             console.log("ERROR");
-//         }
-//     });
-// });
-
-// Removes the selected league and redirects to Favourite Leagues page
-app.get("/remove/leagues/:league_name", function(req, res){
-    var leagueName = req.params.league_name;
-    League.deleteOne({league_name: leagueName}, function(err, removedLeague){
-        if (err){
-            console.log("ERROR!");
-        } else {
-            console.log("=======================");
-            console.log("Removed League");
-            console.log("=======================");
-            console.log(removedLeague);
-            res.redirect("/fav_leagues");
-        }
-    });
-});
-
-// Removes the selected team and redirects to Favourite Teams page
-app.get("/remove/teams/:team_name", function(req, res){
-    var teamName = req.params.team_name;
-    Team.deleteOne({team_name: teamName}, function(err, removedTeam){
-        if (err){
-            console.log("ERROR!");
-        } else {
-            console.log("=======================");
-            console.log("Removed Team");
-            console.log("=======================");
-            console.log(removedTeam);
-            res.redirect("/fav_teams");
-        }
-    });
-});
+app.get("/removeLeague/:league_id", (req, res) => {
+	var league_id = req.params.league_id;
+	FavLeagues.deleteOne({id: league_id}, (err) => {
+		if (err) {
+			console.log("Failed to remove league from database.")
+			return err
+		}
+		console.log("Removed league from favourites.", league_id)
+	})
+})
 
 // Port is currently pointing to 3000 for local testing
 app.listen(8080, process.env.IP, function () {
