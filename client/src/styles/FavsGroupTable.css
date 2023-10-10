@@ -1,0 +1,62 @@
+.tableDiv {
+    width: 100%;
+}
+
+.favGroupRow {
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    align-items: center;
+}
+
+.ui.selectable.celled.table tbody tr:hover {
+	color: #00b85f !important;
+}
+
+.ui.selectable.celled.table {
+    background-color: #2b2e33;
+    color: white;
+    width: 100%;
+}
+
+.ui.selectable.celled.table thead th {
+    background-color: #3a3d42;
+    color: white;
+}
+
+.ui.selectable.celled.table td {
+    display: flex;
+    align-items: center;
+}
+
+.addGroup {
+    color: white !important;
+    justify-content: center;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+a {
+    cursor: pointer;
+    padding: 10px;
+    user-select: none;
+}
+
+img.teamLogo {
+    width: 30px;
+    margin-right: 10px;
+}
+
+i.icon.removeGroup {
+    color: red;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ui.selectable.table tbody tr:hover i.icon.removeGroup, .ui.table tbody tr td.selectable:hover i.icon.removeGroup {
+    color: red;
+    display: contents;
+}

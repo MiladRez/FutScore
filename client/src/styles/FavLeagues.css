@@ -1,0 +1,13 @@
+h1:first-child.header {
+    color: white;
+    margin: 50px;
+    width: 100%;
+    font-size: 50px;
+    display: inline;
+}
+
+.icon.caretIcon {
+    margin: 0 15px 0 0;
+    display: inline;
+    font-size: 50px;
+}

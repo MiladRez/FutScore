@@ -1,0 +1,32 @@
+.ui.fixed.table.tableWidth {
+    margin-top: 40px;
+}
+
+.ui.fixed.table {
+    background-color: #2b2e33;
+    color: white;
+}
+
+.ui.fixed.table thead th {
+    background-color: #3a3d42;
+    color: white;
+    height: 45px;
+}
+
+.leagueFlag {
+    width: 20px;
+    height: 16px;
+    margin-right: 7px;
+}
+
+.leagueLogo {
+    width: 20px;
+    height: 16px;
+    margin-right: 7px;
+}
+
+ .tableHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }

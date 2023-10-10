@@ -1,0 +1,36 @@
+{
+  "name": "milad",
+  "version": "0.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiladRez/FutScore.git"
+  },
+  "author": "Milad Rezaee <miladrezaee07@gmail.com>",
+  "proxy": "http://localhost:8080",
+  "dependencies": {
+    "async": "^0.2.10",
+    "axios": "^0.27.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "ejs": "^2.7.4",
+    "express": "^4.18.2",
+    "mongoose": "^5.9.7",
+    "request": "^2.88.2",
+    "serverless-http": "^3.2.0",
+    "socket.io": "^2.3.0",
+    "unirest": "^0.6.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MiladRez/FutScore/issues"
+  },
+  "homepage": "https://github.com/MiladRez/FutScore#readme"
+}
