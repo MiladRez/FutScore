@@ -2,3 +2,4 @@ node_modules
 todaysMatches.json
 allLeagues.json
 allTeams.json
+.DS_Store
