@@ -33,7 +33,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
                 id: league.split("%")[0],
                 name: league.split("%")[1],
                 country: league.split("%")[2],
-                flag: league.split("%")[3] != "null" ? league.split("%")[3] : worldLogo,
+                flag: league.split("%")[3] !== "null" ? league.split("%")[3] : worldLogo,
                 logo: league.split("%")[4]
             }
         ))

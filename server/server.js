@@ -37,28 +37,24 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(cors())
 
-const url = "https://api-football-v1.p.rapidapi.com/v3";
-const X_RapidAPI_Key = "5UZzmBM8JymshhyLam6aWPoSYtjFp1P0LtwjsnQPZfZbRyQW07";
-const X_RapidAPI_Host = "api-football-v1.p.rapidapi.com";
-
 // returns list of current fixtures from api-football
 app.get("/getFixtures", async (req, res) => {
 
 	const test = true;
 	let data;
 
-	if (!test) {
+	if (test) {
 		data = todaysMatches.data
     } else {
         let date = getCurrentDate();
 
         const options = {
             method: 'GET',
-            url: `${url}/fixtures`,
+            url: `${process.env.API_FOOTBALL_URL}/fixtures`,
             params: {date: date, timezone: "America/Toronto"},
             headers: {
-                'X-RapidAPI-Key': X_RapidAPI_Key,
-                'X-RapidAPI-Host': X_RapidAPI_Host,
+                'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
+                'X-RapidAPI-Host': process.env.X_RAPIDAPI_HOST,
                 useQueryString: true
             }
         };
@@ -87,11 +83,11 @@ app.get("/getAllTeams", async (req, res) => {
     if (retrieveTeamsFromSpecificLeague) {
         const options = {
             method: 'GET',
-            url: `${url}/teams`,
+            url: `${process.env.API_FOOTBALL_URL}/teams`,
             params: { league: leagueID, season: season },
             headers: {
-                'X-RapidAPI-Key': X_RapidAPI_Key,
-                'X-RapidAPI-Host': X_RapidAPI_Host,
+                'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
+                'X-RapidAPI-Host': process.env.X_RAPIDAPI_HOST,
                 useQueryString: true
             }
         }
@@ -113,10 +109,10 @@ app.get("/getAllLeagues", (req, res) => {
     } else {
         const options = {
             method: 'GET',
-            url: `${url}/leagues`,
+            url: `${process.env.API_FOOTBALL_URL}/leagues`,
             headers: {
-                'X-RapidAPI-Key': X_RapidAPI_Key,
-                'X-RapidAPI-Host': X_RapidAPI_Host,
+                'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
+                'X-RapidAPI-Host': process.env.X_RAPIDAPI_HOST,
                 useQueryString: true
             }
         }
