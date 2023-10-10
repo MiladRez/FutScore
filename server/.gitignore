@@ -1,3 +1,4 @@
 node_modules
-.DS_Store
-functions
+todaysMatches.json
+allLeagues.json
+allTeams.json

@@ -2,6 +2,7 @@ const axios = require("axios");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const db = require("../db/connectToDB");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const serverless = require("serverless-http");
@@ -19,7 +20,7 @@ const todaysMatches = require("../jsonFiles/todaysMatches.json");
 const allTeamsJSON = require("../jsonFiles/allTeams.json");
 const allLeaguesJSON = require("../jsonFiles/allLeagues.json");
     
-mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
+mongoose.connect("mongodb+srv://miladrezaee07:2yPJPq0QAsJKkCzs@futscore.wst5myn.mongodb.net/FutScore?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true }); 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
@@ -323,7 +324,7 @@ router.get("/removeLeague/:league_id", (req, res) => {
 // 	})
 // })
 
-app.use("/.netlify/functions/server", router);
+app.use("/", router);
 
 // Port is currently pointing to 3000 for local testing
 app.listen(8080, process.env.IP, function () {
