@@ -33,7 +33,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
                 id: league.split("%")[0],
                 name: league.split("%")[1],
                 country: league.split("%")[2],
-                flag: league.split("%")[3],
+                flag: league.split("%")[3] !== "null" ? league.split("%")[3] : worldLogo,
                 logo: league.split("%")[4]
             }
         ))
@@ -44,6 +44,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
             body: JSON.stringify(newLeaguesToAdd)
         };
         fetch("http://localhost:8080/addLeague", requestOptions);
+        // console.log(newLeaguesToAdd)
         setLeaguesToBeAdded([]);
 		toggleModal();
 		window.location.reload(false);
