@@ -1,26 +1,35 @@
-var request = require("request"),
-	axios = require("axios"),
-	express = require("express"),
-	app = express(),
-	bodyParser = require("body-parser"),
-	mongoose = require("mongoose"),
-	FavTeams = require("./schemaModels/favTeamsModel"),
-	FavLeagues = require("./schemaModels/favLeaguesModel"),
-	cors = require("cors"),
+const axios = require("axios");
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const FavTeams = require("./schemaModels/favTeamsModel");
+const FavLeagues = require("./schemaModels/favLeaguesModel");
+const cors = require("cors");
 
-	{
-		getFavTeams,
-		getFavLeagues,
-		getFavTeamsMatches,
-		getAllOtherLeaguesMatches,
-		getCurrentDate
-	} = require("./utils/consolidateDataHelperFuncs.js"),
+const {
+	getFavTeams,
+	getFavLeagues,
+	getFavTeamsMatches,
+	getAllOtherLeaguesMatches,
+	getCurrentDate
+} = require("./utils/consolidateDataHelperFuncs.js");
 
-	todaysMatches = require("./jsonFiles/todaysMatches.json"),
-	allTeamsJSON = require("./jsonFiles/allTeams.json"),
-	allLeaguesJSON = require("./jsonFiles/allLeagues.json");
+const todaysMatches = require("./jsonFiles/todaysMatches.json");
+const allTeamsJSON = require("./jsonFiles/allTeams.json");
+const allLeaguesJSON = require("./jsonFiles/allLeagues.json");
+
+require('dotenv').config()
     
-mongoose.connect('mongodb://localhost:27017/futscore_app', { useNewUrlParser: true, useUnifiedTopology: true }); 
+try {
+	mongoose.connect(
+		process.env.MONGODB_CONNECTION,
+		{ useNewUrlParser: true, useUnifiedTopology: true },
+		() => console.log("Mongoose is connected")
+	); 
+} catch (err) {
+	console.log("Failed to connect Mongoose")
+}
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
