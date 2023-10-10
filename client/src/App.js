@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Dashboard from "../pages/Dashboard";
-import "../styles/App.css";
-import FavLeagues from "../pages/FavLeagues";
-import FavTeams from "../pages/FavTeams";
+import Dashboard from "./pages/Dashboard";
+import "./styles/App.css";
+import FavLeagues from "./pages/FavLeagues";
+import FavTeams from "./pages/FavTeams";
 
 const App = () => {
 

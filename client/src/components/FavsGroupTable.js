@@ -75,9 +75,9 @@ const FavsGroupTable = ({ favsGroup, tableType, toggleModal }) => {
                         </tr>
                     ))}
                     <tr className="addGroup">
-                        <td>
-                            {/* eslint-disable-next-line */}
-                            <a href="#" onClick={() => toggleModal()}>
+						<td>
+							{/* eslint-disable-next-line */}
+                            <a className="addGroupButton" onClick={() => toggleModal()}>
                                 <i className="plus icon"></i>
                                 {tableType === "favTeams" ? "Add Team" : "Add League"}
                             </a>

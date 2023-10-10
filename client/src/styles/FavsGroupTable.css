@@ -56,14 +56,6 @@ i.icon.removeGroup {
     cursor: pointer;
 }
 
-/* i.icon.removeGroup:hover {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform .7s ease-in-out;
-    transform: rotate(360deg);
-} */
-
 .ui.selectable.table tbody tr:hover i.icon.removeGroup, .ui.table tbody tr td.selectable:hover i.icon.removeGroup {
     color: red;
     display: contents;

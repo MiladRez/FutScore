@@ -6,10 +6,8 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
     const [teams, setTeams] = useState([]);
     const [teamsToBeAdded, setTeamsToBeAdded] = useState([]);
 
-    /* eslint-disable-next-line */
-    const getTeamsToBeAdded = (undefined, {value}) => {
+    const getTeamsToBeAdded = (_, {value}) => {
         setTeamsToBeAdded(value);
-        // console.log(teamsToBeAdded)
     }
 
     const formatAsDropdownItem = useCallback((teams) => {

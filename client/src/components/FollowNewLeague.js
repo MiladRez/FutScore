@@ -7,10 +7,8 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
     const [leagues, setLeagues] = useState([]);
     const [leaguesToBeAdded, setLeaguesToBeAdded] = useState([]);
 
-    /* eslint-disable-next-line */
-    const getLeaguesToBeAdded = (undefined, {value}) => {
+    const getLeaguesToBeAdded = (_, {value}) => {
         setLeaguesToBeAdded(value)
-        // console.log(leaguesToBeAdded)
     }
 
     const formatAsDropdownItem = useCallback((leagues) => {
@@ -46,7 +44,6 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
             body: JSON.stringify(newLeaguesToAdd)
         };
         fetch("http://localhost:8080/addLeague", requestOptions);
-        // console.log(newLeaguesToAdd)
         setLeaguesToBeAdded([]);
 		toggleModal();
 		window.location.reload(false);
