@@ -22,7 +22,7 @@
     "unirest": "^0.6.0"
   },
   "scripts": {
-    "build": "node server.js",
+    "build": "node ./netlify/functions/server.js",
     "server": "nodemon server.js"
   },
   "devDependencies": {
