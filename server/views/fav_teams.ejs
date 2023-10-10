@@ -1,0 +1,49 @@
+<% include ./partials/header %> 
+        <link rel="stylesheet" type="text/css" href="/stylesheets/fav_leagues.css"/>
+        <title>My Teams</title>
+        <h1><center>My Teams</center></h1>
+    </head>
+    <body>
+        
+        <!-- nav bar -->
+        <div class="ui green fixed inverted menu">
+            <div class="ui container">
+                <div class="header item"><i class="futbol icon" style="font-size: 2em;"></i><h2 style="margin-top: -2px !important;">FutScore</h2></div>
+                <a href="/" class="item">Home</a>
+                <a href="/fav_leagues" class="item">My Leagues</a>
+                <a href="/fav_teams" class="item">My Teams</a>
+            </div>
+        </div>
+        
+        <!-- "Add Team" button -->
+        <form action="/add_team">
+            <button class="ui basic button" id="add_button">
+                <i class="plus icon"></i>
+                Add Team
+            </button>
+        </form>
+        <center>
+            <table class="ui selectable celled table" style="width: 80%; text-align: center;">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Table</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% teams.forEach(function(team) { %>
+                        <tr style="height: 50px;">
+                            <td><%= team.team_name %></td>
+                            <form action="/" method="get">
+                                <td><button name="table" class="ui icon button"><i class="table icon"></i></button></td>
+                            </form>
+                            <form action="/remove/teams/<%= team.team_name %>" method="get">
+                                <td><button name="removed" class="ui icon button" style="color:red;" ><i class="times icon"></i></button></td>
+                            </form>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </center>
+<% include ./partials/footer %>

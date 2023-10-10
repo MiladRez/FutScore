@@ -22,7 +22,7 @@ const AddGroupModal = ({ dropdownOptions, toggleModal, showModal, groupsToBeAdde
                             fluid
                             multiple
                             search
-                            onChange={(e, value) => groupsToBeAdded(e, value)}
+                            onChange={(e, value) => groupsToBeAdded(e ,value)}
                             loading={dropdownOptions ? false : true}
                             disabled={dropdownOptions ? false : true}
                             selection

@@ -1,0 +1,50 @@
+<% include ./partials/header %>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/fav_leagues.css"/>
+        <center><h1><%= league_name %> Table Standings</h1></center>
+    </head>
+    <body>
+        
+        <!-- nav bar -->
+        <div class="ui green fixed inverted menu">
+            <div class="ui container">
+                <div class="header item"><i class="futbol icon" style="font-size: 2em;"></i><h2 style="margin-top: -2px !important;">FutScore</h2></div>
+                <a href="/" class="item">Home</a>
+                <a href="/fav_leagues" class="item">My Leagues</a>
+                <a href="/fav_teams" class="item">My Teams</a>
+            </div>
+        </div>
+        <center>
+        <table class="ui selectable celled table" style="width: 80%; text-align: center;">
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Team</th>
+                    <th>PG</th>
+                    <th>W</th>
+                    <th>D</th>
+                    <th>L</th>
+                    <th>GF</th>
+                    <th>GA</th>
+                    <th>GD</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% body["standings"][0]["table"].forEach(function(fixture) { %>
+                    <tr style="height: 50px;">
+                        <td><%= JSON.stringify(fixture.position); %></td>
+                        <td><img src="<%= fixture.team.crestUrl %>" height="40" width="40" style="float: left;"><%= fixture.team.name %></td>
+                        <td><%= JSON.stringify(fixture.playedGames); %></td>
+                        <td><%= JSON.stringify(fixture.won); %></td>
+                        <td><%= JSON.stringify(fixture.draw); %></td>
+                        <td><%= JSON.stringify(fixture.lost); %></td>
+                        <td><%= JSON.stringify(fixture.goalsFor); %></td>
+                        <td><%= JSON.stringify(fixture.goalsAgainst); %></td>
+                        <td><%= JSON.stringify(fixture.goalDifference); %></td>
+                        <td><%= JSON.stringify(fixture.points); %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        </center>
+<% include ./partials/footer %>
