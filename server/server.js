@@ -30,8 +30,11 @@ try {
 	mongoose.connect(
 		process.env.MONGODB_CONNECTION,
 		{ useNewUrlParser: true, useUnifiedTopology: true },
-		() => console.log("Connected to MongoDB.")
-	).then(outFunc());
+		() => {
+			console.log("Connected to MongoDB.")
+			outFunc()
+		}
+	);
 } catch (err) {
 	console.log("Failed to connect to MongoDB.", err)
 }
