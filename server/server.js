@@ -30,6 +30,12 @@ try {
 } catch (err) {
 	console.log("Failed to connect to MongoDB.", err)
 }
+const outFunc = async () => {
+	const output = await FavTeams.find({}, (err) => console.log(err))
+	console.log(output)
+} 
+
+outFunc()
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
