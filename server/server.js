@@ -21,27 +21,15 @@ const allLeaguesJSON = require("./jsonFiles/allLeagues.json");
 
 require('dotenv').config();
     
-// try {
-// 	mongoose.connect(
-// 		process.env.MONGODB_CONNECTION,
-// 		{ useNewUrlParser: true, useUnifiedTopology: true },
-// 		() => console.log(process.env.MONGODB_CONNECTION)
-// 	); 
-// } catch (err) {
-// 	console.log("Failed to connect Mongoose")
-// }
-
-(async () => {
-	try {
-		await mongoose.connect(
-			process.env.MONGODB_CONNECTION,
-			{ useNewUrlParser: true, useUnifiedTopology: true },
-			() => console.log("Connected to MongoDB")
-		);
-	} catch (err) {
-		console.log("Failed to conneect to MongoDB.", err)
-	}
-})()
+try {
+	mongoose.connect(
+		process.env.MONGODB_CONNECTION,
+		{ useNewUrlParser: true, useUnifiedTopology: true },
+		() => console.log("Connected to MongoDB.")
+	);
+} catch (err) {
+	console.log("Failed to connect to MongoDB.", err)
+}
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
