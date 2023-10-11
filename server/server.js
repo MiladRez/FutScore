@@ -26,18 +26,33 @@ const outFunc = async () => {
 	console.log(output)
 } 
 
-try {
-	mongoose.connect(
-		process.env.MONGODB_CONNECTION,
-		{ useNewUrlParser: true, useUnifiedTopology: true },
-		() => {
-			console.log("Connected to MongoDB.")
-			outFunc()
-		}
-	);
-} catch (err) {
-	console.log("Failed to connect to MongoDB.", err)
-}
+// try {
+// 	mongoose.connect(
+// 		process.env.MONGODB_CONNECTION,
+// 		{ useNewUrlParser: true, useUnifiedTopology: true },
+// 		() => {
+// 			console.log("Connected to MongoDB.")
+// 			outFunc()
+// 		}
+// 	);
+// } catch (err) {
+// 	console.log("Failed to connect to MongoDB.", err)
+// }
+
+(async () => {
+	try {
+		await mongoose.connect(
+			process.env.MONGODB_CONNECTION,
+			{ useNewUrlParser: true, useUnifiedTopology: true },
+			() => {
+				console.log("Connected to MongoDB")
+				outFunc()
+			}
+		);
+	} catch (err) {
+		console.log("Failed to conneect to MongoDB.", err)
+	}
+})()
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
