@@ -19,6 +19,8 @@ const todaysMatches = require("./jsonFiles/todaysMatches.json");
 const allTeamsJSON = require("./jsonFiles/allTeams.json");
 const allLeaguesJSON = require("./jsonFiles/allLeagues.json");
 
+const PORT = process.env.PORT || 8080;
+
 require('dotenv').config();
     
 const outFunc = async () => {
@@ -207,6 +209,6 @@ app.get("/removeLeague/:league_id", (req, res) => {
 })
 
 // Port is currently pointing to 3000 for local testing
-app.listen(8080, process.env.IP, function () {
+app.listen(PORT, process.env.IP, function () {
     console.log("The FutScore server has started!");
 });
