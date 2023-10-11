@@ -4,17 +4,16 @@ const mongoose = require("mongoose");
 
 require('dotenv').config();
 
-try {
-	mongoose.connect(
-		process.env.MONGODB_CONNECTION,
-		{ useNewUrlParser: true, useUnifiedTopology: true },
-		() => console.log("Connected to MongoDB.")
-	);
-} catch (err) {
-	console.log("Failed to connect to MongoDB.", err)
-}
-
 const getFavTeams = async (matches) => {
+	try {
+		await mongoose.connect(
+			process.env.MONGODB_CONNECTION,
+			{ useNewUrlParser: true, useUnifiedTopology: true },
+			() => console.log("Connected to MongoDB.")
+		);
+	} catch (err) {
+		console.log("Failed to connect to MongoDB.", err)
+	}
     let teams = await FavTeams.find({}, (err) => {
         if (err) {
             console.log("ERROR: Failed to fetch favourite teams from database.")
