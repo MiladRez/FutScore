@@ -136,7 +136,7 @@ app.post("/addTeam", (req, res) => {
                 console.log("Failed to add new favourited team to database.");
                 return err;
             }
-            console.log("Added new favourited team to database.", favTeam)
+            console.log("Added new favourited team to database.", favTeam.name)
         })
     }
     res.status(201).json(req.body);
@@ -167,7 +167,7 @@ app.post("/addLeague", (req, res) => {
                 console.log("Failed to add new favourited league to database.");
                 return err;
             }
-            console.log("Added new favourited league to database.", favLeague)
+            console.log("Added new favourited league to database.", favLeague.name)
         })
     }
     res.status(201).json(req.body);
