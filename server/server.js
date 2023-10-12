@@ -155,7 +155,7 @@ app.get("/removeTeam/:team_id", (req, res) => {
 
 app.post("/addLeague", (req, res) => {
 	console.log("I am hit")
-	console.log(req)
+	console.log(req.body)
     for (let i in req.body) {
         let favLeague = new FavLeagues({
             id: req.body[i].id,
