@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 8080;
 require('dotenv').config();
     
 const outFunc = async () => {
-	const output = await FavTeams.find({})
+	const output = await FavTeams.count({ name: "Real Madrid" })
 	console.log(output)
 } 
 
