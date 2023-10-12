@@ -27,7 +27,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
         ))
     }, [favLeaguesIds]);
 
-    const addNewLeaguesToDB = () => {
+	const addNewLeaguesToDB = async () => {
         const newLeaguesToAdd = leaguesToBeAdded.map(league => (
             {
                 id: league.split("%")[0],
@@ -42,8 +42,9 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newLeaguesToAdd)
-        };
-        fetch("https://futscore-5xpn.onrender.com/addLeague", requestOptions);
+		};
+		console.log(requestOptions.body)
+        await fetch("https://futscore-5xpn.onrender.com/addLeague", requestOptions);
         // console.log(newLeaguesToAdd)
         setLeaguesToBeAdded([]);
 		toggleModal();

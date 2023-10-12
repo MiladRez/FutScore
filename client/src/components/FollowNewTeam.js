@@ -24,7 +24,7 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
         ))
     }, [favTeamsIds]);
 
-    const addNewTeamsToDB = () => {
+    const addNewTeamsToDB = async () => {
         const newTeamsToAdd = teamsToBeAdded.map(team => (
             {
                 id: team.split("%")[0],
@@ -39,7 +39,7 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newTeamsToAdd)
         };
-        fetch("https://futscore-5xpn.onrender.com/addTeam", requestOptions);
+        await fetch("https://futscore-5xpn.onrender.com/addTeam", requestOptions);
         setTeamsToBeAdded([]);
 		toggleModal();
 		window.location.reload(false);
