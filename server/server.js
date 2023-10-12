@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 8080;
 require('dotenv').config();
     
 const outFunc = async () => {
-	const output = await FavTeams.find({}, (err) => console.log(err))
+	const output = await FavTeams.find({})
 	console.log(output)
 } 
 
