@@ -16,13 +16,13 @@ const FavsGroupTable = ({ favsGroup, tableType, toggleModal }) => {
 	
 	const removeTeamFromDB = (selectedTeam) => {
         const team_id = selectedTeam.team_id
-        fetch("http://localhost:8080/removeTeam/" + team_id);
+        fetch("https://futscore-5xpn.onrender.com/removeTeam/" + team_id);
 		window.location.reload(false);
 	}
 	
 	const removeLeagueFromDB = (selectedLeague) => {
 		const league_id = selectedLeague.id
-		fetch("http://localhost:8080/removeLeague/" + league_id);
+		fetch("https://futscore-5xpn.onrender.com/removeLeague/" + league_id);
 		window.location.reload(false);
 	}
 

@@ -43,7 +43,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newLeaguesToAdd)
         };
-        fetch("http://localhost:8080/addLeague", requestOptions);
+        fetch("https://futscore-5xpn.onrender.com/addLeague", requestOptions);
         // console.log(newLeaguesToAdd)
         setLeaguesToBeAdded([]);
 		toggleModal();
@@ -51,7 +51,7 @@ const FollowNewLeague = ({ toggleModal, showModal, favLeaguesIds }) => {
     }
 
     useEffect(() => {
-        fetch("http://localhost:8080/getAllLeagues")
+        fetch("https://futscore-5xpn.onrender.com/getAllLeagues")
             .then(response => response.json())
             .then(result => {
                 setLeagues(formatAsDropdownItem(result));

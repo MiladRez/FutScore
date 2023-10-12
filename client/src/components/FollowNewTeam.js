@@ -39,14 +39,14 @@ const FollowNewTeam = ({ toggleModal, showModal, favTeamsIds }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newTeamsToAdd)
         };
-        fetch("http://localhost:8080/addTeam", requestOptions);
+        fetch("https://futscore-5xpn.onrender.com/addTeam", requestOptions);
         setTeamsToBeAdded([]);
 		toggleModal();
 		window.location.reload(false);
     }
 
     useEffect(() => {
-        fetch("http://localhost:8080/getAllTeams")
+        fetch("https://futscore-5xpn.onrender.com/getAllTeams")
             .then(response => response.json())
             .then(result => {
                 setTeams(formatAsDropdownItem(result));

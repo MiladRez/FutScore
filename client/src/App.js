@@ -10,7 +10,7 @@ const App = () => {
     const [data, setData] = useState();
 
     useEffect(() => {
-        fetch("http://localhost:8080/getFixtures")
+		fetch("https://futscore-5xpn.onrender.com/getFixtures")
             .then(response => response.json())
             .then(result => {
                 setData(result);

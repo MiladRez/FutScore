@@ -22,32 +22,6 @@ const allLeaguesJSON = require("./jsonFiles/allLeagues.json");
 const PORT = process.env.PORT || 8080;
 
 require('dotenv').config();
-    
-// const outFunc = async () => {
-// 	const output = await FavTeams.count({ name: "Real Madrid" })
-// 	console.log(output)
-// } 
-
-// (async () => {
-// 	await mongoose.connect(
-// 		process.env.MONGODB_CONNECTION,
-// 		{ useNewUrlParser: true, useUnifiedTopology: true }
-// 	);
-// 	outFunc()
-// })()
-
-// try {
-// 	mongoose.connect(
-// 		process.env.MONGODB_CONNECTION,
-// 		{ useNewUrlParser: true, useUnifiedTopology: true },
-// 		() => {
-// 			console.log("Connected to MongoDB.")
-// 			outFunc()
-// 		}
-// 	);
-// } catch (err) {
-// 	console.log("Failed to connect to MongoDB.", err)
-// }
 
 mongoose.connect(
 	process.env.MONGODB_CONNECTION,
@@ -57,19 +31,6 @@ mongoose.connect(
 }).catch(err => {
 	console.log("Failed to connect to MongoDB.", err)
 });
-
-// (async () => {
-// 	await mongoose.connect(
-// 		process.env.MONGODB_CONNECTION,
-// 		{ useNewUrlParser: true, useUnifiedTopology: true },
-// 	).then(() => {
-// 		console.log("Connected to MongoDB.")
-// 		outFunc()
-// 	}).catch(err => {
-// 		console.log("Error: Can't connect to MongoDB.")
-// 		throw err
-// 	}); 
-// })()
     
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -193,6 +154,7 @@ app.get("/removeTeam/:team_id", (req, res) => {
 })
 
 app.post("/addLeague", (req, res) => {
+	console.log("I am hit")
     for (let i in req.body) {
         let favLeague = new FavLeagues({
             id: req.body[i].id,
