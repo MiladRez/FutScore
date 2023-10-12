@@ -54,10 +54,11 @@ mongoose.connect(
 	{ useNewUrlParser: true, useUnifiedTopology: true }
 ).then(() => {
 	console.log("Connected to MongoDB.");
-	outFunc();
 }).catch(err => {
 	console.log("Failed to connect to MongoDB.", err)
 });
+
+outFunc();
 
 // (async () => {
 // 	await mongoose.connect(
