@@ -14,3 +14,7 @@
 .navText {
 	font-size: large;
 }
+
+.ui.green.fixed.inverted.menu .container.center {
+	flex-direction: row;
+}
