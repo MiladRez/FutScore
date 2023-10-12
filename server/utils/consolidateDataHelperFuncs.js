@@ -1,19 +1,7 @@
 const FavTeams = require("../schemaModels/favTeamsModel");
 const FavLeagues = require("../schemaModels/favLeaguesModel"); 
-const mongoose = require("mongoose");
-
-require('dotenv').config();
 
 const getFavTeams = async (matches) => {
-	// mongoose.connect(
-	// 	process.env.MONGODB_CONNECTION,
-	// 	{ useNewUrlParser: true, useUnifiedTopology: true }
-	// ).then(() => {
-	// 	console.log("Connected to MongoDB.");
-	// }).catch(err => {
-	// 	console.log("Failed to connect to MongoDB.", err)
-	// 	return
-	// });
     let teams = await FavTeams.find({}, (err) => {
         if (err) {
             console.log("ERROR: Failed to fetch favourite teams from database.")

@@ -23,10 +23,10 @@ const PORT = process.env.PORT || 8080;
 
 require('dotenv').config();
     
-const outFunc = async () => {
-	const output = await FavTeams.count({ name: "Real Madrid" })
-	console.log(output)
-} 
+// const outFunc = async () => {
+// 	const output = await FavTeams.count({ name: "Real Madrid" })
+// 	console.log(output)
+// } 
 
 // (async () => {
 // 	await mongoose.connect(
@@ -57,8 +57,6 @@ mongoose.connect(
 }).catch(err => {
 	console.log("Failed to connect to MongoDB.", err)
 });
-
-outFunc();
 
 // (async () => {
 // 	await mongoose.connect(
