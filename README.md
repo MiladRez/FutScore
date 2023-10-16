@@ -19,25 +19,25 @@ Created using:
 ## Screenshots
 
 <h2 align="center">Dashboard</h2>
-<img src=https://github.com/MiladRez/FutScore/assets/29521979/8cbcb8b0-a9a3-4e2d-b0f6-9a28eb16e03a />
+<img src=https://github.com/MiladRez/FutScore/assets/29521979/36bb98c7-e9c9-4518-a545-c1ae6f5bf1f7 />
 
 <br/>
 <br/>
 <br/>
 
 <h2 align="center">User Favourited Teams</h2>
-<img src=https://github.com/MiladRez/FutScore/assets/29521979/e3e328d1-b936-4373-88d2-cb4b6e98a496 />
+<img src=https://github.com/MiladRez/FutScore/assets/29521979/1a155f08-428e-43bd-94ed-40133cda8c23 />
 
 <br/>
 <br/>
 <br/>
 
 <h2 align="center">User Favourited Leagues</h2>
-<img src=https://github.com/MiladRez/FutScore/assets/29521979/e0609daf-03b6-4781-ab5c-849b7beee9ae />
+<img src=https://github.com/MiladRez/FutScore/assets/29521979/b19526b5-90e9-4d09-b5d4-819ff0d788dc />
 
 <br/>
 <br/>
 <br/>
 
 <h2 align="center">Add New Favourited Team/League</h2>
-<img src=https://github.com/MiladRez/FutScore/assets/29521979/4fde6604-850a-40ba-a1ff-0c8ef1aaca59 />
+<img src=https://github.com/MiladRez/FutScore/assets/29521979/479caa6c-a6b5-401e-97a5-bab1ddb1d8b0 />
